@@ -42,3 +42,22 @@ npm run dev
 ```bash
 npm run test
 ```
+
+## Etapa atual — Autenticação e acesso
+
+Implementado no front-end:
+
+- `/login` com seleção de estudante, vendedor e administrador;
+- `/cadastro` para escolha do perfil;
+- `/cadastro/estudante`;
+- `/cadastro/vendedor`;
+- `/recuperar-senha`;
+- armazenamento local de token e usuário;
+- logout e limpeza da sessão;
+- identificação do papel pelo usuário autenticado;
+- proteção de rotas com `ProtectedRoute`;
+- redirecionamento para `/estudante`, `/vendedor` ou `/admin` conforme o perfil;
+- retorno para a rota originalmente solicitada após login;
+- camada `services/api` preparada para o backend através de `VITE_API_BASE_URL`.
+
+> A autenticação real depende do backend. O front-end espera que `POST /auth/login` retorne `{ token, user }`.
