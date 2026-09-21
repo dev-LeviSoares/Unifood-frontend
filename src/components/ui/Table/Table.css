@@ -1,0 +1,42 @@
+.ui-table-wrapper {
+  width: 100%;
+  overflow-x: auto; /* rola na horizontal no mobile em vez de quebrar o layout */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.ui-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-family);
+  font-size: var(--fs-small);
+  min-width: 480px; /* evita que colunas fiquem espremidas antes de rolar */
+}
+
+.ui-table thead {
+  background: var(--color-surface);
+}
+
+.ui-table th {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.ui-table td {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.ui-table tbody tr:hover {
+  background: var(--color-surface);
+}
+
+.ui-table__empty {
+  padding: var(--space-7) var(--space-4);
+  text-align: center;
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,31 @@
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 24px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-full);
+  font-family: var(--font-family);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.ui-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ui-badge--success { background: var(--color-success-bg); color: var(--color-success); }
+.ui-badge--success .ui-badge__dot { background: var(--color-success); }
+
+.ui-badge--error { background: var(--color-error-bg); color: var(--color-error); }
+.ui-badge--error .ui-badge__dot { background: var(--color-error); }
+
+.ui-badge--warning { background: var(--color-warning-bg); color: #8A6600; }
+.ui-badge--warning .ui-badge__dot { background: var(--color-warning); }
+
+.ui-badge--neutral { background: var(--color-neutral-bg); color: var(--color-neutral); }
+.ui-badge--neutral .ui-badge__dot { background: var(--color-neutral); }

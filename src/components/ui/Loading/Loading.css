@@ -1,0 +1,31 @@
+.ui-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family);
+  font-size: var(--fs-small);
+}
+
+.ui-loading__spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2.5px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  animation: ui-loading-spin 0.6s linear infinite;
+}
+
+.ui-loading--fullscreen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 900;
+}
+
+@keyframes ui-loading-spin {
+  to { transform: rotate(360deg); }
+}
