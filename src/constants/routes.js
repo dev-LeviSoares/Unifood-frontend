@@ -8,4 +8,7 @@ export const ROUTES = Object.freeze({
   STUDENT_HOME: '/estudante',
   SELLER_HOME: '/vendedor',
   ADMIN_HOME: '/admin',
+  SELLERS: '/vendedores',
+  CART: '/carrinho',
+  PRODUCT: '/produto',
 });
