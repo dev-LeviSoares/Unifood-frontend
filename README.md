@@ -61,21 +61,3 @@ Implementado no front-end:
 - camada `services/api` preparada para o backend através de `VITE_API_BASE_URL`.
 
 > A autenticação real depende do backend. O front-end espera que `POST /auth/login` retorne `{ token, user }`.
-
-## Modo de desenvolvimento — navegação sem autenticação
-
-Para visualizar e testar as telas protegidas durante o desenvolvimento, defina no `.env`:
-
-```env
-VITE_DEV_MODE=true
-```
-
-O bypass é aceito somente quando a aplicação está sendo executada pelo Vite em modo de desenvolvimento (`import.meta.env.DEV`). Portanto, `VITE_DEV_MODE=true` não transforma um build de produção em uma aplicação sem proteção.
-
-Para voltar ao fluxo normal:
-
-```env
-VITE_DEV_MODE=false
-```
-
-> Esse recurso existe exclusivamente para facilitar desenvolvimento e teste. A autorização real dos dados e operações deve continuar sendo validada pelo backend.
