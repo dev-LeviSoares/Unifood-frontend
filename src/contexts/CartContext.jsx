@@ -12,6 +12,28 @@ export function CartProvider({ children }) {
   const [items, setItems] = useState([]); // { productId, name, unitPriceInCents, quantity }
 
   const addItem = useCallback((product, quantity = 1) => {
+    if (!product?.sellerId || !product?.id || quantity < 1) {
+      return { ok: false, error: 'Produto inválido para o carrinho.' };
+    }
+
+    if (sellerId && sellerId !== product.sellerId) {
+      return {
+        ok: false,
+        error: 'Seu carrinho só pode ter produtos de um vendedor por vez.',
+      };
+    }
+
+    if (product.available === false || product.stock === 0) {
+      return { ok: false, error: 'Este produto não está disponível para pedido.' };
+    }
+
+    const currentItem = items.find((item) => item.productId === product.id);
+    const nextQuantity = (currentItem?.quantity ?? 0) + quantity;
+
+    if (Number.isFinite(product.stock) && nextQuantity > product.stock) {
+      return { ok: false, error: `Há apenas ${product.stock} unidade(s) disponíveis.` };
+    }
+
     setSellerId((current) => current ?? product.sellerId);
     setItems((current) => {
       const existing = current.find((item) => item.productId === product.id);
@@ -32,7 +54,9 @@ export function CartProvider({ children }) {
         },
       ];
     });
-  }, []);
+
+    return { ok: true };
+  }, [items, sellerId]);
 
   const removeItem = useCallback((productId) => {
     setItems((current) => current.filter((item) => item.productId !== productId));

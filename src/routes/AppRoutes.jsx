@@ -15,6 +15,11 @@ import { PasswordRecovery } from '../pages/public/PasswordRecovery';
 import { Home as StudentHome } from '../pages/student/Home';
 import { Home as SellerHome } from '../pages/seller/Home';
 import { Home as AdminHome } from '../pages/admin/Home';
+import { Marketplace } from '../pages/student/marketplace/Marketplace';
+import { SellerProfile } from '../pages/student/marketplace/SellerProfile';
+import { SellerMenu } from '../pages/student/marketplace/SellerMenu';
+import { ProductDetail } from '../pages/student/marketplace/ProductDetail';
+import { Cart } from '../pages/student/Cart';
 
 export function AppRoutes() {
   return (
@@ -26,11 +31,18 @@ export function AppRoutes() {
         <Route path={ROUTES.STUDENT_REGISTER} element={<StudentRegister />} />
         <Route path={ROUTES.SELLER_REGISTER} element={<SellerRegister />} />
         <Route path={ROUTES.PASSWORD_RECOVERY} element={<PasswordRecovery />} />
+
+        {/* Descoberta é pública: o usuário conhece o marketplace antes de criar uma conta. */}
+        <Route path={ROUTES.SELLERS} element={<Marketplace />} />
+        <Route path={`${ROUTES.SELLERS}/:sellerId`} element={<SellerProfile />} />
+        <Route path={`${ROUTES.SELLERS}/:sellerId/cardapio`} element={<SellerMenu />} />
+        <Route path={`${ROUTES.PRODUCT}/:productId`} element={<ProductDetail />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={[ROLES.STUDENT]} />}>
         <Route element={<StudentLayout />}>
           <Route path={ROUTES.STUDENT_HOME} element={<StudentHome />} />
+          <Route path={ROUTES.CART} element={<Cart />} />
         </Route>
       </Route>
 
