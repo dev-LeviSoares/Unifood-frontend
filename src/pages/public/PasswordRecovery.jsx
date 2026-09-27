@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { authService } from '../../services/api/authService';
 import { ROUTES } from '../../constants/routes';
 import '../../styles/auth.css';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export function PasswordRecovery() {
+  useDocumentTitle('Recuperar senha');
   const [identifier, setIdentifier] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');

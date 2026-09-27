@@ -5,6 +5,7 @@ import { ROUTES } from '../../constants/routes';
 import { ROLES } from '../../constants/roles';
 import { isNotEmpty } from '../../utils/validators';
 import '../../styles/auth.css';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 const profiles = [
   { value: ROLES.STUDENT, label: 'Estudante' },
@@ -12,6 +13,7 @@ const profiles = [
 ];
 
 export function Login() {
+  useDocumentTitle('Entrar');
   const { isAuthenticated, role, login, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

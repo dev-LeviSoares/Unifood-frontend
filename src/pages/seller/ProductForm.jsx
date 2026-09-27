@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { productService } from '../../services/api/productService';
-import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../contexts/ToastContext';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
@@ -23,7 +22,6 @@ function toPriceInCents(rawValue) {
 export function ProductForm() {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const toast = useToast();
   const editing = Boolean(productId);
 
@@ -103,7 +101,9 @@ export function ProductForm() {
     setLoading(true);
     try {
       const payload = new FormData();
-      payload.append('sellerId', user?.id ?? '');
+      // sellerId não vai mais no corpo — quem é o vendedor deve ser
+      // deduzido pelo backend a partir do token autenticado, nunca de um
+      // campo que o cliente pode adulterar.
       payload.append('name', form.name.trim());
       payload.append('description', form.description.trim());
       payload.append('priceInCents', String(priceInCents));

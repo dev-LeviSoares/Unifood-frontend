@@ -11,6 +11,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useToast } from '../../../contexts/ToastContext';
 import { formatCurrency } from '../../../utils/formatCurrency';
 import { MarketplaceHeader } from './MarketplaceHeader';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import './marketplace.css';
 
 export function ProductDetail() {
@@ -21,6 +22,7 @@ export function ProductDetail() {
   const { addItem } = useCart();
   const toast = useToast();
   const [product, setProduct] = useState(null);
+  useDocumentTitle(product ? product.name : 'Produto');
   const [seller, setSeller] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);

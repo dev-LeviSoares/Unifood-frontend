@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /estudante
+Disallow: /vendedor
+Disallow: /admin
+Disallow: /carrinho
+
+Sitemap: https://unifood.com.br/sitemap.xml

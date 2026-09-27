@@ -6,12 +6,14 @@ import { sellerService } from '../../../services/api/sellerService';
 import { marketplaceSellers, marketplaceProducts } from '../../../data/marketplaceMock';
 import { ROUTES } from '../../../constants/routes';
 import { MarketplaceHeader } from './MarketplaceHeader';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { formatCurrency } from '../../../utils/formatCurrency';
 import './marketplace.css';
 
 export function SellerProfile() {
   const { sellerId } = useParams();
   const [seller, setSeller] = useState(null);
+  useDocumentTitle(seller ? seller.name : 'Vendedor');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 

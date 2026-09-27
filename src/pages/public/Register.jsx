@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import '../../styles/auth.css';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export function Register() {
+  useDocumentTitle('Criar conta');
   return (
     <main className="auth-page">
       <section className="auth-card register-choice" aria-labelledby="register-title">

@@ -5,9 +5,11 @@ import { ROUTES } from '../../constants/routes';
 import { isNotEmpty, isValidPassword, isValidPhone, onlyDigits } from '../../utils/validators';
 import { AuthField } from './components/AuthField';
 import '../../styles/auth.css';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export function StudentRegister() {
   const navigate = useNavigate();
+  useDocumentTitle('Criar conta de estudante');
   const [form, setForm] = useState({ name: '', username: '', phone: '', birthDate: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');

@@ -28,10 +28,14 @@ import { MenuForm } from '../pages/seller/MenuForm';
 import { Orders } from '../pages/seller/Orders';
 import { OrderDetail } from '../pages/seller/OrderDetail';
 import { History } from '../pages/seller/History';
+import { DevAccess } from '../pages/dev/DevAccess';
 
 export function AppRoutes() {
   return (
     <Routes>
+      {import.meta.env.DEV && import.meta.env.VITE_DEV_MODE === 'true' && (
+        <Route path="/__dev" element={<DevAccess />} />
+      )}
       <Route element={<PublicLayout />}>
         <Route path={ROUTES.HOME} element={<PublicHome />} />
         <Route path={ROUTES.LOGIN} element={<Login />} />

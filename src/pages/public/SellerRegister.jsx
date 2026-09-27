@@ -6,9 +6,11 @@ import { isNotEmpty, isValidCpf, isValidPassword, isValidPhone, onlyDigits } fro
 import { AuthField } from './components/AuthField';
 import { ImageUpload } from '../../components/ui/ImageUpload';
 import '../../styles/auth.css';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export function SellerRegister() {
   const navigate = useNavigate();
+  useDocumentTitle('Criar conta de vendedor');
   const [form, setForm] = useState({ name: '', cpf: '', username: '', phone: '', birthDate: '', password: '', confirmPassword: '', establishmentName: '' });
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState(null);

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { menuService } from '../../services/api/menuService';
-import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../contexts/ToastContext';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
@@ -12,7 +11,6 @@ import './seller.css';
 
 export function MenuForm() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const toast = useToast();
   const [form, setForm] = useState({ name: '', start: '', end: '', published: false });
   const [error, setError] = useState('');
@@ -33,7 +31,8 @@ export function MenuForm() {
 
     setLoading(true);
     try {
-      await menuService.create({ ...form, sellerId: user?.id });
+      // sellerId não vai mais no corpo — mesma razão do ProductForm.jsx
+      await menuService.create(form);
       toast.success('Cardápio salvo.');
       navigate(ROUTES.SELLER_MENUS);
     } catch (requestError) {

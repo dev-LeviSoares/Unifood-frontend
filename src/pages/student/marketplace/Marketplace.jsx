@@ -7,9 +7,11 @@ import { sellerService } from '../../../services/api/sellerService';
 import { marketplaceSellers } from '../../../data/marketplaceMock';
 import { ROUTES } from '../../../constants/routes';
 import { MarketplaceHeader } from './MarketplaceHeader';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import './marketplace.css';
 
 export function Marketplace() {
+  useDocumentTitle('Vendedores no campus');
   const [query, setQuery] = useState('');
   const [sellers, setSellers] = useState([]);
   const [loading, setLoading] = useState(true);

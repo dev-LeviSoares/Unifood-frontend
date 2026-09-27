@@ -5,8 +5,10 @@ import { useCart } from '../../contexts/CartContext';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { MarketplaceHeader } from './marketplace/MarketplaceHeader';
 import './marketplace/marketplace.css';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export function Cart() {
+  useDocumentTitle('Carrinho');
   const { items, totalInCents, updateQuantity, removeItem, clear } = useCart();
 
   return (

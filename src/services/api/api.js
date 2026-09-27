@@ -8,7 +8,8 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = getToken();
-  if (token) {
+  // Tokens sintéticos de desenvolvimento nunca são enviados ao backend.
+  if (token && !token.startsWith('unifood-dev-session:')) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -17,7 +18,9 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const token = getToken();
+    const isDevSession = token?.startsWith('unifood-dev-session:');
+    if (error.response?.status === 401 && !isDevSession) {
       clearSession();
       // AuthProvider escuta este evento pra deslogar o estado em memória e
       // redirecionar pro login — sem isso, a UI continuava "logada" até a

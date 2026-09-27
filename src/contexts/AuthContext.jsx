@@ -8,6 +8,7 @@ import {
   setSession,
 } from '../services/storage/storage';
 import { ROUTES } from '../constants/routes';
+import { ROLES } from '../constants/roles';
 
 export const AuthContext = createContext(null);
 
@@ -33,6 +34,23 @@ export function AuthProvider({ children }) {
     window.addEventListener('unifood:session-expired', handleSessionExpired);
     return () => window.removeEventListener('unifood:session-expired', handleSessionExpired);
   }, [logout, navigate]);
+
+  const devLogin = useCallback(async ({ role, name }) => {
+    // Sessão sintética exclusivamente para navegação local; jamais habilitada em produção.
+    if (!import.meta.env.DEV || import.meta.env.VITE_DEV_MODE !== 'true') {
+      throw new Error('A navegação de teste só está disponível no ambiente local.');
+    }
+    if (!Object.values(ROLES).includes(role)) {
+      throw new Error('Perfil de teste inválido.');
+    }
+
+    const testUser = { id: `dev-${role}`, name, role };
+    const testToken = `unifood-dev-session:${role}`;
+    setSession(testToken, testUser);
+    setUser(testUser);
+    setToken(testToken);
+    return testUser;
+  }, []);
 
   const login = useCallback(async (credentials) => {
     setLoading(true);
@@ -62,9 +80,10 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(token && user),
       loading,
       login,
+      devLogin,
       logout,
     }),
-    [user, token, loading, login, logout]
+    [user, token, loading, login, devLogin, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
