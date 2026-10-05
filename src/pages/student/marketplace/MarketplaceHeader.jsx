@@ -13,7 +13,11 @@ export function MarketplaceHeader() {
       <header className="marketplace-header">
         <div className="marketplace-header__inner">
           <Link to={ROUTES.HOME} className="marketplace-brand" aria-label="Ir para o início do Unifood">
-            <span className="marketplace-brand__mark">U</span>
+            <img
+              src="/images/categories/unifood-logo.webp"
+              alt="Unifood"
+              className="unifood-logo"
+            />
             <span>UNIFOOD</span>
           </Link>
 
@@ -24,6 +28,7 @@ export function MarketplaceHeader() {
 
           <Link className="marketplace-cart" to={ROUTES.CART} aria-label={`Carrinho com ${items.length} itens`}>
             <Icon name="bag" />
+            <span>Carrinho</span>
             {items.length > 0 && <span className="marketplace-cart__count">{items.length}</span>}
           </Link>
         </div>
@@ -36,7 +41,7 @@ export function MarketplaceHeader() {
       <nav className="marketplace-bottom-nav" aria-label="Navegação mobile">
         <Link className={!isExplore ? 'is-active' : ''} to={ROUTES.HOME}><Icon name="home" /><span>Início</span></Link>
         <Link className={isExplore ? 'is-active' : ''} to={ROUTES.SELLERS}><Icon name="search" /><span>Explorar</span></Link>
-        <Link className={location.pathname === ROUTES.CART ? 'is-active' : ''} to={ROUTES.CART}><Icon name="bag" /><span>Carrinho</span>{items.length > 0 && <b>{items.length}</b>}</Link>
+        <Link className={location.pathname === ROUTES.CART ? 'is-active' : ''} to={ROUTES.CART}><Icon name="bag"/> <span>Carrinho</span> {items.length > 0 && <b>{items.length}</b>}</Link>
         <Link to={ROUTES.LOGIN}><Icon name="user" /><span>Entrar</span></Link>
       </nav>
     </>

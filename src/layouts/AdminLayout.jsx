@@ -8,7 +8,17 @@ export function AdminLayout() {
   return (
     <div className="admin-app-shell">
       <aside className="admin-sidebar">
-        <div className="admin-brand"><span>U</span><div><strong>UNIFOOD</strong><small>Administração</small></div></div>
+       <div className="seller-sidebar-brand">
+          <img
+            src="/images/categories/unifood-logo.webp"
+            alt="Unifood"
+            className="unifood-logo"
+          />
+          <div>
+            <strong>UNIFOOD</strong>
+            <small>Área do vendedor</small>
+          </div>
+        </div>
         <div className="admin-sidebar-label">Visão da plataforma</div>
         <nav aria-label="Navegação administrativa">
           <NavLink to={ROUTES.ADMIN_HOME} end><Icon name="dashboard" />Visão geral</NavLink>

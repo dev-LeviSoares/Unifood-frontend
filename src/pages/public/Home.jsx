@@ -8,19 +8,19 @@ import './public-home.css';
 const categories = [
   {
     label: 'Lanches',
-    image: '/images/categories/hamburguer.webp',
+    image: '/images/categories/product-burger.webp',
   },
   {
     label: 'Bebidas',
-    image: '/images/categories/bebida.webp',
+    image: '/images/categories/product-juice.webp',
   },
   {
     label: 'Salgados',
-    image: '/images/categories/salgado.webp',
+    image: '/images/categories/product-coxinha.webp',
   },
   {
     label: 'Doces',
-    image: '/images/categories/doce.webp',
+    image: '/images/categories/product-sweet.webp',
   },
 ];
 
@@ -46,12 +46,12 @@ export function Home() {
             <span><i>✓</i> Retire direto</span>
           </div>
         </div>
-        <div className="home-hero__visual" aria-hidden="true">
-          <div className="food-orbit food-orbit--one"><img src="" alt=''></img></div>
-          <div className="food-orbit food-orbit--two"><img src="" alt="" /></div>
+          <div className="home-hero__visual" aria-hidden="true">
+          <div className="food-orbit food-orbit--one"><img src="/images/categories/product-hot-dog.webp" alt=''></img></div>
+          <div className="food-orbit food-orbit--two"><img src="/images/categories/product-fruit-drink.webp" alt='' /></div>
           <div className="hero-food-card">
             <span className="hero-food-card__badge">intervalo</span>
-            <div className="hero-food-card__food"><img src="" alt=''></img></div>
+            <div className="hero-food-card__food"><img src="/images/categories/hero-cover.webp" alt=''></img></div>
             <strong>Seu próximo lanche</strong>
             <small>Escolha. Peça. Retire.</small>
           </div>
@@ -145,7 +145,16 @@ export function Home() {
       </section>
 
       <footer className="public-home__footer">
-        <div className="brand-lockup"><span className="brand-mark">U</span><span>UNIFOOD</span></div>
+        <div className="brand-lockup">
+          <span className="brand-mark">
+            <img
+              src="/images/categories/unifood-logo.webp"
+              alt="Unifood"
+              className="unifood-logo"
+            />
+          </span>
+          <span>UNIFOOD</span>
+        </div>
         <p>Feito para deixar o intervalo mais simples.</p>
       </footer>
     </main>

@@ -19,8 +19,15 @@ export function SellerLayout() {
     <div className="seller-app-shell">
       <aside className="seller-sidebar">
         <div className="seller-sidebar-brand">
-          <span>U</span>
-          <div><strong>UNIFOOD</strong><small>Área do vendedor</small></div>
+          <img
+            src="/images/categories/unifood-logo.webp"
+            alt="Unifood"
+            className="unifood-logo"
+          />
+          <div>
+            <strong>UNIFOOD</strong>
+            <small>Área do vendedor</small>
+          </div>
         </div>
         <div className="seller-sidebar-section-label">Operação</div>
         <nav aria-label="Navegação do vendedor">

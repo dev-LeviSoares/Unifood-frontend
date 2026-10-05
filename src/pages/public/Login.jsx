@@ -58,7 +58,13 @@ export function Login() {
     <main className="login-page">
       <div className="login-wrapper">
         <div className="login-topbar">
-          <span className="login-brand-mark" aria-hidden="true">U</span>
+          <span className="login-brand-mark" aria-hidden="true">
+            <img
+              src="/images/categories/unifood-logo.webp"
+              alt="Unifood"
+              className="unifood-logo"
+            />
+          </span>
           <span className="login-brand-name">UNIFOOD</span>
         </div>
 
