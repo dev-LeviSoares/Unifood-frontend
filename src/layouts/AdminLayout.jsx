@@ -8,7 +8,7 @@ export function AdminLayout() {
   return (
     <div className="admin-app-shell">
       <aside className="admin-sidebar">
-       <div className="seller-sidebar-brand">
+       <div className="admin-brand">
           <img
             src="/images/categories/unifood-logo.webp"
             alt="Unifood"
@@ -16,16 +16,16 @@ export function AdminLayout() {
           />
           <div>
             <strong>UNIFOOD</strong>
-            <small>Área do vendedor</small>
+            <small>Administração</small>
           </div>
         </div>
         <div className="admin-sidebar-label">Visão da plataforma</div>
         <nav aria-label="Navegação administrativa">
           <NavLink to={ROUTES.ADMIN_HOME} end><Icon name="dashboard" />Visão geral</NavLink>
-          <span className="admin-nav-disabled"><Icon name="users" />Usuários</span>
-          <span className="admin-nav-disabled"><Icon name="store" />Vendedores</span>
-          <span className="admin-nav-disabled"><Icon name="box" />Produtos</span>
-          <span className="admin-nav-disabled"><Icon name="orders" />Pedidos</span>
+          <NavLink to={ROUTES.ADMIN_USERS}><Icon name="users" /><span>Usuários</span></NavLink>
+          <NavLink to={ROUTES.ADMIN_SELLERS}><Icon name="store" /><span>Vendedores</span></NavLink>
+          <NavLink to={ROUTES.ADMIN_PRODUCTS}><Icon name="box" /><span>Produtos</span></NavLink>
+          <NavLink to={ROUTES.ADMIN_ORDERS}><Icon name="orders" /><span>Pedidos</span></NavLink>
         </nav>
         <div className="admin-sidebar-footer">
           <div className="admin-user"><span>{(user?.name || 'A').charAt(0).toUpperCase()}</span><div><strong>{user?.name || 'Administrador'}</strong><small>acesso administrativo</small></div></div>
@@ -33,7 +33,7 @@ export function AdminLayout() {
         </div>
       </aside>
       <div className="admin-content">
-        <header className="admin-mobile-header"><div><strong>UNIFOOD</strong><span>Administração</span></div><div className="admin-mobile-avatar">{(user?.name || 'A').charAt(0).toUpperCase()}</div></header>
+        <header className="admin-mobile-header"><div><strong>UNIFOOD</strong><span>Administração</span></div><button type="button" className="operations-mobile-logout" onClick={logout}>Sair</button></header>
         <Outlet />
       </div>
     </div>

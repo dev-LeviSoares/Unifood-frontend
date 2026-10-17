@@ -1,162 +1,206 @@
-import { Link } from 'react-router-dom';
-import { marketplaceProducts, marketplaceSellers } from '../../data/marketplaceMock';
+import '../../styles/home-combo-banner.css';
+import { readLocalData } from '../../services/storage/localData';
+import { CatalogSkeleton } from '../../components/marketplace/CatalogSkeleton';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
-import { formatCurrency } from '../../utils/formatCurrency';
-import { MarketplaceHeader } from '../student/marketplace/MarketplaceHeader';
-import './public-home.css';
-
-const categories = [
-  {
-    label: 'Lanches',
-    image: '/images/categories/product-burger.webp',
-  },
-  {
-    label: 'Bebidas',
-    image: '/images/categories/product-juice.webp',
-  },
-  {
-    label: 'Salgados',
-    image: '/images/categories/product-coxinha.webp',
-  },
-  {
-    label: 'Doces',
-    image: '/images/categories/product-sweet.webp',
-  },
-];
+import { useAuth } from '../../hooks/useAuth';
+import { useMarketplace } from '../../hooks/useMarketplace';
+import { useProductActions } from '../../hooks/useProductActions';
+import { StudentPage } from '../student/StudentPage';
+import { Icon } from '../../components/marketplace/Icon';
+import { SearchField } from '../../components/marketplace/SearchField';
+import { Categories } from '../../components/marketplace/Categories';
+import { ProductCard } from '../../components/marketplace/ProductCard';
 
 export function Home() {
-  const featured = marketplaceProducts.filter((product) => product.available && product.stock > 0).slice(0, 3);
-
+  const { user } = useAuth();
+  const profile = user ? readLocalData(`unifood_profile:${user.id}`, {}) : {};
+  const firstName = (profile.name || user?.name || '').split(' ')[0];
+  const { products, sellers, loading, demo } = useMarketplace();
+  const { add } = useProductActions();
+  const navigate = useNavigate();
+  const [sort, setSort] = useState('recommended');
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+  const featuredIds = [
+    'x-burguer',
+    'coxinha-frango',
+    'brigadeiro-gourmet',
+    'suco-laranja',
+  ];
+  const available = products
+    .filter(
+      (product) =>
+        product.available !== false &&
+        product.stock !== 0 &&
+        sellers.find((seller) => seller.id === product.sellerId)?.status !==
+          'CLOSED',
+    )
+    .sort((a, b) => {
+      const rank = (product) => {
+        const index = featuredIds.indexOf(product.id);
+        return index === -1 ? 99 : index;
+      };
+      return rank(a) - rank(b);
+    });
+  const ordered = [...products].sort((a, b) =>
+    sort === 'price' ? a.priceInCents - b.priceInCents : 0,
+  );
+  const search = (value) =>
+    navigate(
+      `${ROUTES.SELLERS}${value ? `?q=${encodeURIComponent(value)}` : ''}`,
+    );
   return (
-    <main className="public-home">
-      <MarketplaceHeader />
-
-      <section className="home-hero">
-        <div className="home-hero__copy">
-          <span className="home-kicker">Seu intervalo começa aqui</span>
-          <h1>Seu lanche, sem perder tempo entre uma aula e outra.</h1>
-          <p>Descubra o que está disponível na sua universidade, peça antes e retire direto com o vendedor.</p>
-          <div className="home-hero__actions">
-            <Link className="home-primary-action" to={ROUTES.SELLERS}>Ver vendedores <span>→</span></Link>
-            <Link className="home-secondary-action" to={ROUTES.REGISTER}>Criar minha conta</Link>
-          </div>
-          <div className="home-trust-row">
-            <span><i>✓</i> Descubra opções</span>
-            <span><i>✓</i> Peça antecipadamente</span>
-            <span><i>✓</i> Retire direto</span>
-          </div>
-        </div>
-          <div className="home-hero__visual" aria-hidden="true">
-          <div className="food-orbit food-orbit--one"><img src="/images/categories/product-hot-dog.webp" alt=''></img></div>
-          <div className="food-orbit food-orbit--two"><img src="/images/categories/product-fruit-drink.webp" alt='' /></div>
-          <div className="hero-food-card">
-            <span className="hero-food-card__badge">intervalo</span>
-            <div className="hero-food-card__food"><img src="/images/categories/hero-cover.webp" alt=''></img></div>
-            <strong>Seu próximo lanche</strong>
-            <small>Escolha. Peça. Retire.</small>
-          </div>
-        </div>
-      </section>
-
-      <section className="home-content home-content--tight">
-        <div className="home-section-heading">
-          <div>
-            <span>Descubra</span>
-            <h2>O que você está com vontade de comer?</h2>
-          </div>
-          <Link to={ROUTES.SELLERS}>Ver tudo →</Link>
-        </div>
-        <div className="category-grid">
-          {categories.map((category) => (
-            <Link
-              to={ROUTES.SELLERS}
-              className="category-card"
-              key={category.label}
-            >
-              <img
-                src={category.image}
-                alt={category.label}
-                loading="lazy"
-              />
-              <strong>{category.label}</strong>
-              <small>Encontrar opções</small>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="home-content">
-        <div className="home-section-heading">
-          <div>
-            <span>Para sua próxima pausa</span>
-            <h2>Opções para pedir hoje</h2>
-          </div>
-          <Link to={ROUTES.SELLERS}>Explorar cardápios →</Link>
-        </div>
-        <div className="home-product-grid">
-          {featured.map((product) => (
-            <Link className="home-product-card" to={`${ROUTES.PRODUCT}/${product.id}`} key={product.id}>
-              <div className="home-product-card__image"><span>{product.name.slice(0, 1)}</span></div>
-              <div className="home-product-card__body">
-                <small>{product.category}</small>
-                <h3>{product.name}</h3>
-                <p>{product.description}</p>
-                <strong>{formatCurrency(product.priceInCents)}</strong>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="home-content">
-        <div className="home-section-heading">
-          <div>
-            <span>Onde encontrar</span>
-            <h2>Quem está servindo hoje</h2>
-          </div>
-          <Link to={ROUTES.SELLERS}>Todos os vendedores →</Link>
-        </div>
-        <div className="home-seller-strip">
-          {marketplaceSellers.slice(0, 3).map((seller) => (
-            <Link to={`${ROUTES.SELLERS}/${seller.id}`} className="home-seller-card" key={seller.id}>
-              <div className="home-seller-card__avatar">{seller.name.slice(0, 2).toUpperCase()}</div>
-              <div>
-                <small>{seller.campus}</small>
-                <h3>{seller.name}</h3>
-                <p>{seller.category} · {seller.pickupTime.replace('Pronto para retirada em até ', 'Retirada em até ')}</p>
-              </div>
-              <span>→</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="home-how-it-works">
+    <StudentPage title="Seu intervalo começa aqui" cartBar>
+      <section className="uf-home-intro">
         <div>
-          <span className="home-kicker">Sem complicação</span>
-          <h2>Do campus para o seu intervalo.</h2>
-          <p>Você escolhe o que quer, deixa o pedido encaminhado e vai buscar quando estiver pronto.</p>
+          <p className="uf-greeting">
+            {greeting}
+            {firstName ? `, ${firstName}` : ''}{' '}
+            <span className="uf-sun" aria-hidden="true">
+              ✺
+            </span>
+          </p>
+          <h1>Seu intervalo merece um lanche bom.</h1>
         </div>
-        <div className="home-steps">
-          <article><b>01</b><strong>Encontre</strong><p>Explore vendedores e cardápios disponíveis.</p></article>
-          <article><b>02</b><strong>Peça</strong><p>Monte seu pedido antes de chegar para retirar.</p></article>
-          <article><b>03</b><strong>Retire</strong><p>Vá direto ao vendedor e aproveite seu intervalo.</p></article>
+        <span className="uf-campus">
+          <Icon name="pin" size={16} />
+          Campus Central{demo && <small>Demo</small>}
+        </span>
+      </section>
+      <div className="uf-home-search">
+        <SearchField onSearch={search} />
+      </div>
+      <div className="uf-trending">
+        <span>Buscas em alta</span>
+        {['Coxinha', 'Suco', 'Chocolate'].map((term) => (
+          <button key={term} onClick={() => search(term)}>
+            {term}
+          </button>
+        ))}
+      </div>
+      <section className="uf-offer uf-offer--breakout" aria-labelledby="combo-heading">
+        <div className="uf-offer__copy">
+          <span>OFERTAS QUE SALVAM O INTERVALO</span>
+
+          <h2 id="combo-heading">
+            Tá com fome?
+            <br />
+            Confira as ofertas
+          </h2>
+
+          <p>Comida boa, preço de estudante e retirada no seu campus.</p>
+
+          <Link className="uf-button uf-button--white" to={ROUTES.SELLERS}>
+            Bora aproveitar <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+        <div className="uf-offer__art">
+          <img
+            src="/images/food/hero-combo-breakout.png"
+            alt="Hambúrguer e Coca-Cola atravessando a borda de um painel laranja, com pequenos fragmentos ao redor"
+            width="1774"
+            height="887"
+            decoding="async"
+          />
         </div>
       </section>
-
-      <footer className="public-home__footer">
-        <div className="brand-lockup">
-          <span className="brand-mark">
-            <img
-              src="/images/categories/unifood-logo.webp"
-              alt="Unifood"
-              className="unifood-logo"
-            />
-          </span>
-          <span>UNIFOOD</span>
+      <Categories
+        selected="Lanches"
+        onSelect={(category) =>
+          navigate(
+            `${ROUTES.SELLERS}${category ? `?category=${encodeURIComponent(category)}` : ''}`,
+          )
+        }
+      />
+      <section className="uf-section">
+        <div className="uf-section-heading">
+          <div>
+            <h2>
+              <Icon name="flame" />
+              Mais pedidos
+            </h2>
+            <p>Os favoritos da galera. Disponíveis agora.</p>
+          </div>
+          <Link to={ROUTES.SELLERS}>
+            Ver todos <span aria-hidden="true">→</span>
+          </Link>
         </div>
-        <p>Feito para deixar o intervalo mais simples.</p>
-      </footer>
-    </main>
+        {loading ? (
+          <CatalogSkeleton />
+        ) : (
+          <div className="uf-featured-grid">
+            {available.slice(0, 4).map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                seller={sellers.find(
+                  (seller) => seller.id === product.sellerId,
+                )}
+                onAdd={add}
+                featured
+              />
+            ))}
+          </div>
+        )}
+      </section>
+      <section className="uf-section">
+        <div className="uf-section-heading">
+          <div>
+            <h2>O que você vai comer?</h2>
+            <p>Conheça quem prepara o seu próximo lanche.</p>
+          </div>
+          <select
+            className="uf-sort"
+            aria-label="Ordenar produtos"
+            value={sort}
+            onChange={(event) => setSort(event.target.value)}
+          >
+            <option value="recommended">Recomendados</option>
+            <option value="price">Menor preço</option>
+          </select>
+        </div>
+        {loading ? (
+          <CatalogSkeleton />
+        ) : (
+          <div className="uf-product-grid">
+            {ordered.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                seller={sellers.find(
+                  (seller) => seller.id === product.sellerId,
+                )}
+                onAdd={add}
+              />
+            ))}
+          </div>
+        )}
+        {!loading && !products.length && (
+          <div className="uf-empty">
+            <h3>O cardápio ainda está sendo preparado</h3>
+            <Link to={ROUTES.SELLERS}>Conhecer vendedores</Link>
+          </div>
+        )}
+      </section>
+      <section className="uf-campus-note">
+        <Icon name="heart" />
+        <div>
+          <h2>Da cozinha de um aluno para você.</h2>
+          <p>
+            Escolha, combine o ponto de retirada e encontre o vendedor no
+            campus. Sem entrega, sem complicação.
+          </p>
+        </div>
+        <Link to={ROUTES.SELLERS}>Conheça os vendedores →</Link>
+      </section>
+      {demo && (
+        <p className="uf-demo-label">
+          Você está explorando um catálogo de demonstração.
+        </p>
+      )}
+    </StudentPage>
   );
 }

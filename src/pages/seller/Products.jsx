@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
-import { useAuth } from '../../hooks/useAuth';
+import { useSellerList } from '../../hooks/useSellerList';
 import { productService } from '../../services/api/productService';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -35,35 +34,13 @@ const columns = [
     key: 'actions',
     header: '',
     render: (row) => (
-      <Link to={ROUTES.SELLER_PRODUCT_EDIT.replace(':productId', row.id)}>Editar</Link>
+      <Link to={ROUTES.SELLER_PRODUCT_EDIT.replace(':productId', encodeURIComponent(row.id))}>Editar</Link>
     ),
   },
 ];
 
 export function Products() {
-  const { user } = useAuth();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  async function load() {
-    setLoading(true);
-    setError(false);
-    try {
-      const data = await productService.listBySeller(user?.id);
-      setProducts(data ?? []);
-    } catch {
-      // sem backend ainda: trata como "nenhum produto" em vez de travar a tela
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
+  const { items: products, loading, error, retry: load } = useSellerList(productService.listBySeller, 'products');
 
   return (
     <main className="seller-page">

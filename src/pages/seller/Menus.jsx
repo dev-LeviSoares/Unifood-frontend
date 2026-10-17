@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
-import { useAuth } from '../../hooks/useAuth';
+import { useSellerList } from '../../hooks/useSellerList';
+import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { menuService } from '../../services/api/menuService';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -9,19 +9,7 @@ import { Loading } from '../../components/ui/Loading';
 import './seller.css';
 
 export function Menus() {
-  const { user } = useAuth();
-  const [menus, setMenus] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let active = true;
-    menuService
-      .listBySeller(user?.id)
-      .then((data) => { if (active) setMenus(data ?? []); })
-      .catch(() => { if (active) setMenus([]); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [user?.id]);
+  const { items: menus, loading, error, retry } = useSellerList(menuService.listBySeller, 'menus');
 
   return (
     <main className="seller-page">
@@ -38,8 +26,9 @@ export function Menus() {
         </header>
 
         {loading && <Loading label="Carregando cardápios..." />}
+        {!loading && error && <ErrorMessage title="Não foi possível carregar os cardápios." description="Confira a conexão com o serviço e tente novamente." onRetry={retry} />}
 
-        {!loading && menus.length === 0 && (
+        {!loading && !error && menus.length === 0 && (
           <Card>
             <div style={{ textAlign: 'center', padding: 'var(--space-7) var(--space-4)' }}>
               <h2 style={{ marginBottom: 'var(--space-2)' }}>Nenhum cardápio criado</h2>
@@ -53,7 +42,7 @@ export function Menus() {
           </Card>
         )}
 
-        {!loading && menus.length > 0 && (
+        {!loading && !error && menus.length > 0 && (
           <div className="seller-metrics-grid">
             {menus.map((menu) => (
               <Card key={menu.id}>
