@@ -1,17 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { ORDER_STATUS, ORDER_STATUS_LABELS } from '../../constants/orderStatus';
-import { useAuth } from '../../hooks/useAuth';
+import { useSellerList } from '../../hooks/useSellerList';
+import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { orderService } from '../../services/api/orderService';
 import { Card } from '../../components/ui/Card';
 import { Loading } from '../../components/ui/Loading';
 import './seller.css';
 
-// Antes essas abas eram só <span> sem onClick — clicar nelas não fazia
-// nada. Agora filtram de verdade a lista (mesmo hoje vazia) e usam os
-// mesmos rótulos de ORDER_STATUS_LABELS usados no resto do app, em vez de
-// um texto solto reescrito só aqui.
 const tabs = [
   { key: 'all', label: 'Todos' },
   { key: ORDER_STATUS.PENDING, label: ORDER_STATUS_LABELS[ORDER_STATUS.PENDING] },
@@ -20,20 +16,15 @@ const tabs = [
 ];
 
 export function Orders() {
-  const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('all');
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let active = true;
-    orderService
-      .listBySeller(user?.id, activeTab === 'all' ? undefined : { status: activeTab })
-      .then((data) => { if (active) setOrders(data ?? []); })
-      .catch(() => { if (active) setOrders([]); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [user?.id, activeTab]);
+  const [params, setParams] = useSearchParams();
+  const activeTab = tabs.some((tab) => tab.key === params.get('status')) ? params.get('status') : 'all';
+  const { items, loading, error, retry } = useSellerList(orderService.listBySeller, 'orders');
+  const orders = items.filter((order) => activeTab === 'all' || order.status === activeTab);
+  function setActiveTab(status) {
+    const next = new URLSearchParams(params);
+    if (status === 'all') next.delete('status'); else next.set('status', status);
+    setParams(next);
+  }
 
   return (
     <main className="seller-page">
@@ -62,8 +53,9 @@ export function Orders() {
         </div>
 
         {loading && <Loading label="Carregando pedidos..." />}
+        {!loading && error && <ErrorMessage title="Não foi possível carregar os pedidos." description="Confira a conexão com o serviço e tente novamente." onRetry={retry} />}
 
-        {!loading && orders.length === 0 && (
+        {!loading && !error && orders.length === 0 && (
           <Card>
             <div style={{ textAlign: 'center', padding: 'var(--space-7) var(--space-4)' }}>
               <h2 style={{ marginBottom: 'var(--space-2)' }}>Nenhum pedido por enquanto</h2>
@@ -77,10 +69,10 @@ export function Orders() {
           </Card>
         )}
 
-        {!loading && orders.length > 0 && (
-          <div style={{ display: 'grid', gap: 'var(--space-3)' }}>
+        {!loading && !error && orders.length > 0 && (
+          <div className="seller-order-list">
             {orders.map((order) => (
-              <Link key={order.id} to={ROUTES.SELLER_ORDER_DETAIL.replace(':orderId', order.id)}>
+              <Link key={order.id} to={`${ROUTES.SELLER_ORDER_DETAIL.replace(':orderId', encodeURIComponent(order.id))}?status=${activeTab}`}>
                 <Card>
                   <strong>Pedido #{order.id}</strong>
                   <p className="seller-muted">{ORDER_STATUS_LABELS[order.status] || order.status}</p>

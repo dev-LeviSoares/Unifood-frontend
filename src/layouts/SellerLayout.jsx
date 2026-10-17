@@ -49,7 +49,7 @@ export function SellerLayout() {
       <div className="seller-content">
         <header className="seller-mobile-header">
           <div><strong>Olá, {firstName}</strong><span>Área do vendedor</span></div>
-          <div className="seller-mobile-avatar">{(user?.name || 'V').charAt(0).toUpperCase()}</div>
+          <button type="button" className="operations-mobile-logout" onClick={logout}>Sair</button>
         </header>
         <Outlet />
       </div>

@@ -25,7 +25,12 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   if (isAuthenticated) {
-    return <Navigate to={getHomeByRole(role)} replace />;
+    const from = location.state?.from;
+    const destination =
+      role === ROLES.STUDENT && from
+        ? `${from.pathname}${from.search || ''}${from.hash || ''}`
+        : getHomeByRole(role);
+    return <Navigate to={destination} replace />;
   }
 
   async function handleSubmit(event) {
@@ -43,13 +48,17 @@ export function Login() {
         identifier: identifier.trim(),
         password,
       });
-      const destination = location.state?.from?.pathname || getHomeByRole(user.role);
+      const from = location.state?.from;
+      const destination =
+        user.role === ROLES.STUDENT && from
+          ? `${from.pathname}${from.search || ''}${from.hash || ''}`
+          : getHomeByRole(user.role);
       navigate(destination, { replace: true });
     } catch (requestError) {
       setError(
         requestError?.response?.data?.message ||
           requestError?.message ||
-          'Não foi possível entrar. Verifique seus dados.'
+          'Não foi possível entrar. Verifique seus dados.',
       );
     }
   }
@@ -80,14 +89,22 @@ export function Login() {
           <h1 id="login-title" className="login-title">
             Bem-vindo ao Unifood <span aria-hidden="true"></span>
           </h1>
-          <p className="login-subtitle">Entre para fazer seus pedidos na sua universidade.</p>
+          <p className="login-subtitle">
+            Entre para fazer seus pedidos na sua universidade.
+          </p>
 
-          <div className="login-tabs" role="tablist" aria-label="Tipo de acesso">
+          <div
+            className="login-tabs"
+            role="tablist"
+            aria-label="Tipo de acesso"
+          >
             {profiles.map((item) => (
               <button
                 key={item.value}
                 type="button"
-                className={profile === item.value ? 'login-tab is-active' : 'login-tab'}
+                className={
+                  profile === item.value ? 'login-tab is-active' : 'login-tab'
+                }
                 onClick={() => setProfile(item.value)}
                 role="tab"
                 aria-selected={profile === item.value}
@@ -99,21 +116,28 @@ export function Login() {
 
           <form className="login-form" onSubmit={handleSubmit} noValidate>
             <div className="login-field">
-              <label htmlFor="identifier">{profile === ROLES.ADMIN ? 'CPF' : 'Usuário'}</label>
+              <label htmlFor="identifier">
+                {profile === ROLES.ADMIN ? 'CPF' : 'Usuário'}
+              </label>
               <input
                 id="identifier"
                 className="login-input"
                 value={identifier}
                 onChange={(event) => setIdentifier(event.target.value)}
                 autoComplete="username"
-                placeholder={profile === ROLES.ADMIN ? 'Seu CPF' : 'Seu e-mail ou usuário'}
+                placeholder={
+                  profile === ROLES.ADMIN ? 'Seu CPF' : 'Seu e-mail ou usuário'
+                }
               />
             </div>
 
             <div className="login-field">
               <div className="login-field-header">
                 <label htmlFor="password">Senha</label>
-                <Link className="login-forgot-link" to={ROUTES.PASSWORD_RECOVERY}>
+                <Link
+                  className="login-forgot-link"
+                  to={ROUTES.PASSWORD_RECOVERY}
+                >
                   Esqueci minha senha
                 </Link>
               </div>
@@ -146,7 +170,9 @@ export function Login() {
             )}
 
             <button className="login-submit" type="submit" disabled={loading}>
-              {loading ? 'Entrando...' : (
+              {loading ? (
+                'Entrando...'
+              ) : (
                 <>
                   Entrar <span aria-hidden="true">→</span>
                 </>
@@ -155,12 +181,14 @@ export function Login() {
           </form>
 
           <p className="login-footer-link">
-            Ainda não possui uma conta? <Link to={ROUTES.REGISTER}>Criar conta</Link>
+            Ainda não possui uma conta?{' '}
+            <Link to={ROUTES.REGISTER}>Criar conta</Link>
           </p>
         </section>
 
         <p className="login-legal">
-          Ao entrar, você concorda com os Termos de Uso e a Política de Privacidade.
+          Ao entrar, você concorda com os Termos de Uso e a Política de
+          Privacidade.
         </p>
       </div>
     </main>
@@ -170,7 +198,13 @@ export function Login() {
 function EyeIcon({ open }) {
   if (open) {
     return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
         <path
           d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M6.6 6.7C4.6 8 3.1 9.8 2 12c1.6 3.6 5.2 7 10 7 1.7 0 3.2-.4 4.6-1.1M9.9 4.2A10.4 10.4 0 0112 4c4.8 0 8.4 3.4 10 7-0.6 1.3-1.4 2.5-2.4 3.6"
           stroke="currentColor"
@@ -182,7 +216,13 @@ function EyeIcon({ open }) {
     );
   }
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M2 12c1.6-3.6 5.2-7 10-7s8.4 3.4 10 7c-1.6 3.6-5.2 7-10 7s-8.4-3.4-10-7z"
         stroke="currentColor"

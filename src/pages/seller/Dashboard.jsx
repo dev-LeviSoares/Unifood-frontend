@@ -6,9 +6,9 @@ import { Badge } from '../../components/ui/Badge';
 import './seller.css';
 
 const metrics = [
-  { key: 'pending', label: 'Pedidos pendentes', value: '0', tone: 'warning', href: ROUTES.SELLER_ORDERS },
-  { key: 'preparing', label: 'Em preparação', value: '0', tone: 'info', href: ROUTES.SELLER_ORDERS },
-  { key: 'ready', label: 'Pedidos prontos', value: '0', tone: 'success', href: ROUTES.SELLER_ORDERS },
+  { key: 'pending', label: 'Pedidos pendentes', value: '0', tone: 'warning', href: `${ROUTES.SELLER_ORDERS}?status=pending` },
+  { key: 'preparing', label: 'Em preparação', value: '0', tone: 'info', href: `${ROUTES.SELLER_ORDERS}?status=preparing` },
+  { key: 'ready', label: 'Pedidos prontos', value: '0', tone: 'success', href: `${ROUTES.SELLER_ORDERS}?status=ready` },
   { key: 'completed', label: 'Vendas concluídas', value: '0', tone: 'neutral', href: ROUTES.SELLER_HISTORY },
   { key: 'active', label: 'Produtos ativos', value: '0', tone: 'info', href: ROUTES.SELLER_PRODUCTS },
   { key: 'soldOut', label: 'Produtos esgotados', value: '0', tone: 'danger', href: ROUTES.SELLER_PRODUCTS },
@@ -42,7 +42,7 @@ export function Dashboard() {
         </header>
 
         <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+          <div className="seller-account-status">
             <Badge tone={status.tone === 'error' ? 'error' : status.tone}>{status.tone === 'success' ? '✓ Aprovado' : status.label}</Badge>
             <div style={{ flex: 1 }}>
               <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--fs-small)' }}>{status.description}</p>
@@ -64,7 +64,7 @@ export function Dashboard() {
           <div className="seller-metrics-grid">
             {metrics.map((metric) => (
               <Link className="seller-metric-link" to={metric.href} key={metric.key}>
-                <Card>
+                <Card className="ui-card seller-metric-card">
                   <span className={`seller-metric-dot ${metric.tone}`} />
                   <span className="seller-metric-label">{metric.label}</span>
                   <strong>{metric.value}</strong>

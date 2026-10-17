@@ -1,126 +1,207 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Input } from '../../../components/ui/Input';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { sellerService } from '../../../services/api/sellerService';
-import { marketplaceSellers } from '../../../data/marketplaceMock';
+import { useSearchParams, Link } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
-import { MarketplaceHeader } from './MarketplaceHeader';
-import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
-import './marketplace.css';
+import { useMarketplace } from '../../../hooks/useMarketplace';
+import { useProductActions } from '../../../hooks/useProductActions';
+import { StudentPage } from '../StudentPage';
+import { Categories } from '../../../components/marketplace/Categories';
+import { SearchField } from '../../../components/marketplace/SearchField';
+import { ProductCard } from '../../../components/marketplace/ProductCard';
+import { Icon } from '../../../components/marketplace/Icon';
+import { CatalogSkeleton } from '../../../components/marketplace/CatalogSkeleton';
 
+const normalize = (value) =>
+  (value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+function categoryMatches(product, category) {
+  if (!category) return true;
+  if (category === 'Lanches')
+    return /lanche|sandu|mais pedidos/i.test(product.category || '');
+  return normalize(product.category).includes(normalize(category));
+}
 export function Marketplace() {
-  useDocumentTitle('Vendedores no campus');
-  const [query, setQuery] = useState('');
-  const [sellers, setSellers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    let active = true;
-
-    async function loadSellers() {
-      setLoading(true);
-      setError('');
-      try {
-        const data = await sellerService.list({ status: 'APPROVED' });
-        const result = Array.isArray(data) ? data : data?.items ?? data?.sellers ?? [];
-        const approved = result.filter((seller) => !seller.status || seller.status === 'APPROVED' || seller.status === 'ACTIVE');
-        if (active) setSellers(approved);
-      } catch {
-        if (active) {
-          setSellers(marketplaceSellers);
-          setError('Não foi possível conectar ao servidor. Exibindo o cardápio de demonstração.');
-        }
-      } finally {
-        if (active) setLoading(false);
-      }
-    }
-
-    loadSellers();
-    return () => { active = false; };
-  }, []);
-
-  const filteredSellers = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return sellers;
-    return sellers.filter((seller) =>
-      [seller.name, seller.description, seller.category, seller.campus]
-        .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(normalized))
-    );
-  }, [query, sellers]);
-
+  const [params, setParams] = useSearchParams();
+  const query = params.get('q') || '';
+  const category = params.get('category') || '';
+  const sort = params.get('sort') || 'recommended';
+  const view = params.get('view') || 'products';
+  const { products, sellers, loading, demo } = useMarketplace();
+  const { add } = useProductActions();
+  function filter(key, value) {
+    const next = new URLSearchParams(params);
+    if (value) next.set(key, value);
+    else next.delete(key);
+    setParams(next);
+  }
+  const matched = products.filter(
+    (product) =>
+      categoryMatches(product, category) &&
+      normalize(
+        [
+          product.name,
+          product.description,
+          sellers.find((seller) => seller.id === product.sellerId)?.name,
+        ].join(' '),
+      ).includes(normalize(query)),
+  );
+  const ordered = [...matched].sort((a, b) =>
+    sort === 'price' ? a.priceInCents - b.priceInCents : 0,
+  );
+  const matchingSellers = sellers.filter((seller) =>
+    normalize(
+      [seller.name, seller.category, seller.description].join(' '),
+    ).includes(normalize(query)),
+  );
+  const recommendations = products
+    .filter(
+      (product) =>
+        !matched.includes(product) &&
+        product.available !== false &&
+        product.stock !== 0,
+    )
+    .slice(0, 4);
   return (
-    <div className="marketplace-page">
-      <MarketplaceHeader />
-      <main className="marketplace-container">
-        <section className="marketplace-hero">
-          <div>
-            <span className="marketplace-eyebrow">🎓 Seu intervalo começa aqui</span>
-            <h1>O que você vai comer entre uma aula e outra?</h1>
-            <p>Encontre vendedores da sua universidade, escolha seu lanche e deixe o pedido encaminhado para a retirada.</p>
-          </div>
-          <div className="marketplace-hero__note">
-            <strong>Sem perder tempo na fila.</strong>
-            <span>Escolha primeiro. Retire quando estiver pronto.</span>
-          </div>
-        </section>
-
-        <section className="marketplace-search" aria-label="Pesquisar vendedores">
-          <Input
-            label="Pesquisar vendedores"
-            placeholder="Ex.: lanches, café, Cantinho da Maria..."
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-        </section>
-
-        {error && <div className="marketplace-alert" role="status">{error}</div>}
-
-        <section className="marketplace-section" aria-labelledby="sellers-title">
-          <div className="marketplace-section__heading">
+    <StudentPage
+      title="Buscar"
+      heading="Encontre seu próximo favorito."
+      cartBar
+    >
+      <SearchField
+        key={query}
+        value={query}
+        onSearch={(value) => filter('q', value)}
+        label="Pesquisar vendedores e lanches"
+      />
+      <p className="uf-search-campus">
+        <Icon name="pin" size={15} />
+        Buscando no Campus Central{' '}
+        {demo && <span className="uf-tag">Demo</span>}
+      </p>
+      <div className="uf-filter-row">
+        <Categories
+          selected={category}
+          onSelect={(value) => filter('category', value)}
+        />
+        <select
+          className="uf-sort"
+          aria-label="Ordenar resultados"
+          value={sort}
+          onChange={(event) => filter('sort', event.target.value)}
+        >
+          <option value="recommended">Recomendados</option>
+          <option value="price">Menor preço</option>
+        </select>
+      </div>
+      <div className="uf-tabs" aria-label="Tipo de resultado">
+        <button
+          className={view === 'products' ? 'is-selected' : ''}
+          onClick={() => filter('view', 'products')}
+        >
+          Lanches
+        </button>
+        <button
+          className={view === 'sellers' ? 'is-selected' : ''}
+          onClick={() => filter('view', 'sellers')}
+        >
+          Vendedores
+        </button>
+      </div>
+      {loading ? (
+        <CatalogSkeleton />
+      ) : view === 'products' ? (
+        <>
+          <div className="uf-section-heading">
             <div>
-              <span className="marketplace-section__kicker">Perto de você</span>
-              <h2 id="sellers-title">Quem está servindo hoje</h2>
+              <h2>
+                {ordered.length}{' '}
+                {ordered.length === 1 ? 'resultado' : 'resultados'}
+              </h2>
+              {query && <p>Para “{query}”</p>}
             </div>
-            {!loading && <span className="marketplace-section__count">{filteredSellers.length} opções</span>}
+            {(query || category) && (
+              <button className="uf-text-button" onClick={() => setParams({})}>
+                Limpar filtros
+              </button>
+            )}
           </div>
-
-          {loading ? (
-            <div className="marketplace-grid" aria-label="Carregando vendedores">
-              {[1, 2, 3].map((item) => <div className="seller-card seller-card--skeleton" key={item} />)}
-            </div>
-          ) : filteredSellers.length > 0 ? (
-            <div className="marketplace-grid">
-              {filteredSellers.map((seller) => (
-                <article className="seller-card" key={seller.id}>
-                  <div className="seller-card__visual">
-                    <div className="seller-card__initials" aria-hidden="true">{seller.name?.slice(0, 2).toUpperCase()}</div>
-                    {seller.status === 'OPEN' ? <Badge tone="success">Pedidos disponíveis</Badge> : <Badge tone="neutral">Fechado agora</Badge>}
-                  </div>
-                  <div className="seller-card__body">
-                    <div className="seller-card__meta">{seller.category || 'Lanches'} · {seller.campus || 'Sua universidade'}</div>
-                    <h3>{seller.name}</h3>
-                    <p>{seller.description}</p>
-                    <span className="seller-card__pickup">{seller.pickupTime}</span>
-                  </div>
-                  <Link className="seller-card__link" to={`${ROUTES.SELLERS}/${seller.id}`}>
-                    <Button variant="secondary" fullWidth>Ver cardápio</Button>
-                  </Link>
-                </article>
+          {ordered.length ? (
+            <div className="uf-product-grid">
+              {ordered.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  seller={sellers.find(
+                    (seller) => seller.id === product.sellerId,
+                  )}
+                  onAdd={add}
+                />
               ))}
             </div>
           ) : (
-            <div className="marketplace-empty">
-              <span aria-hidden="true">🔎</span>
-              <h3>Nenhum vendedor encontrado</h3>
-              <p>Tente buscar pelo nome do vendedor ou pelo tipo de lanche.</p>
+            <div className="uf-empty">
+              <Icon name="search" size={32} />
+              <h2>Nenhum lanche por aqui</h2>
+              <p>Tente outro nome ou categoria para encontrar seu favorito.</p>
+              <button className="uf-button" onClick={() => setParams({})}>
+                Ver todos os lanches
+              </button>
+            </div>
+          )}
+          {recommendations.length > 0 && (
+            <section className="uf-section">
+              <div className="uf-section-heading">
+                <div>
+                  <h2>Combina com seu intervalo</h2>
+                  <p>Outras delícias disponíveis agora.</p>
+                </div>
+              </div>
+              <div className="uf-product-grid">
+                {recommendations.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    seller={sellers.find(
+                      (seller) => seller.id === product.sellerId,
+                    )}
+                    onAdd={add}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      ) : (
+        <section className="uf-seller-grid">
+          {matchingSellers.length ? (
+            matchingSellers.map((seller) => (
+              <article className="uf-panel uf-seller-card" key={seller.id}>
+                <div className="uf-seller-avatar">
+                  {seller.name?.slice(0, 1)}
+                </div>
+                <h2>{seller.name}</h2>
+                <p>{seller.description}</p>
+                <span className="uf-tag">
+                  {seller.status === 'CLOSED'
+                    ? 'Fechado agora'
+                    : 'Ver disponibilidade no cardápio'}
+                </span>
+                <Link
+                  className="uf-button uf-button--secondary"
+                  to={`${ROUTES.SELLERS}/${seller.id}`}
+                >
+                  Ver cardápio
+                </Link>
+              </article>
+            ))
+          ) : (
+            <div className="uf-empty">
+              <h2>Nenhum vendedor encontrado</h2>
+              <button onClick={() => filter('q', '')}>Limpar busca</button>
             </div>
           )}
         </section>
-      </main>
-    </div>
+      )}
+    </StudentPage>
   );
 }

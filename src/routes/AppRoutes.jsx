@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { ROLES } from '../constants/roles';
 import { ROUTES } from '../constants/routes';
@@ -13,11 +13,17 @@ import { StudentRegister } from '../pages/public/StudentRegister';
 import { SellerRegister } from '../pages/public/SellerRegister';
 import { PasswordRecovery } from '../pages/public/PasswordRecovery';
 import { Home as StudentHome } from '../pages/student/Home';
+import { AdminCollection } from '../pages/admin/Collection';
 import { Home as AdminHome } from '../pages/admin/Home';
 import { Marketplace } from '../pages/student/marketplace/Marketplace';
 import { SellerProfile as MarketplaceSellerProfile } from '../pages/student/marketplace/SellerProfile';
 import { SellerMenu } from '../pages/student/marketplace/SellerMenu';
 import { ProductDetail } from '../pages/student/marketplace/ProductDetail';
+import { Checkout } from '../pages/student/Checkout';
+import { StudentOrders } from '../pages/student/Orders';
+import { StudentOrderDetail } from '../pages/student/OrderDetail';
+import { StudentProfile } from '../pages/student/Profile';
+import { NotFound } from '../pages/shared/NotFound';
 import { Cart } from '../pages/student/Cart';
 import { Dashboard } from '../pages/seller/Dashboard';
 import { Profile } from '../pages/seller/Profile';
@@ -29,6 +35,7 @@ import { Orders } from '../pages/seller/Orders';
 import { OrderDetail } from '../pages/seller/OrderDetail';
 import { History } from '../pages/seller/History';
 import { DevAccess } from '../pages/dev/DevAccess';
+import '../styles/operations-design.css';
 
 export function AppRoutes() {
   return (
@@ -44,15 +51,31 @@ export function AppRoutes() {
         <Route path={ROUTES.SELLER_REGISTER} element={<SellerRegister />} />
         <Route path={ROUTES.PASSWORD_RECOVERY} element={<PasswordRecovery />} />
         <Route path={ROUTES.SELLERS} element={<Marketplace />} />
-        <Route path={`${ROUTES.SELLERS}/:sellerId`} element={<MarketplaceSellerProfile />} />
-        <Route path={`${ROUTES.SELLERS}/:sellerId/cardapio`} element={<SellerMenu />} />
-        <Route path={`${ROUTES.PRODUCT}/:productId`} element={<ProductDetail />} />
+        <Route
+          path={`${ROUTES.SELLERS}/:sellerId`}
+          element={<MarketplaceSellerProfile />}
+        />
+        <Route
+          path={`${ROUTES.SELLERS}/:sellerId/cardapio`}
+          element={<SellerMenu />}
+        />
+        <Route
+          path={`${ROUTES.PRODUCT}/:productId`}
+          element={<ProductDetail />}
+        />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={[ROLES.STUDENT]} />}>
         <Route element={<StudentLayout />}>
           <Route path={ROUTES.STUDENT_HOME} element={<StudentHome />} />
           <Route path={ROUTES.CART} element={<Cart />} />
+          <Route path={ROUTES.CHECKOUT} element={<Checkout />} />
+          <Route path={ROUTES.STUDENT_ORDERS} element={<StudentOrders />} />
+          <Route
+            path={ROUTES.STUDENT_ORDER_DETAIL}
+            element={<StudentOrderDetail />}
+          />
+          <Route path={ROUTES.STUDENT_PROFILE} element={<StudentProfile />} />
         </Route>
       </Route>
 
@@ -72,10 +95,16 @@ export function AppRoutes() {
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
-        <Route element={<AdminLayout />}><Route path={ROUTES.ADMIN_HOME} element={<AdminHome />} /></Route>
+        <Route element={<AdminLayout />}>
+          <Route path={ROUTES.ADMIN_HOME} element={<AdminHome />} />
+          <Route path={ROUTES.ADMIN_USERS} element={<AdminCollection resource="users" />} />
+          <Route path={ROUTES.ADMIN_SELLERS} element={<AdminCollection resource="sellers" />} />
+          <Route path={ROUTES.ADMIN_PRODUCTS} element={<AdminCollection resource="products" />} />
+          <Route path={ROUTES.ADMIN_ORDERS} element={<AdminCollection resource="orders" />} />
+        </Route>
       </Route>
 
-      <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

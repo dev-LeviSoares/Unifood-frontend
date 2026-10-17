@@ -31,14 +31,21 @@ export function ProductForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingExisting, setLoadingExisting] = useState(editing);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
+    setNotFound(false);
+    setLoadingExisting(editing);
+    setForm({ name: '', description: '', price: '', stock: '', available: true });
+    setPhotoFile(null);
+    setPhotoPreviewUrl(null);
     if (!editing) return;
     let active = true;
     productService
       .getById(productId)
       .then((data) => {
-        if (!active || !data) return;
+        if (!data || typeof data !== 'object' || String(data.id) !== productId || typeof data.name !== 'string') throw new Error('Produto inválido.');
+        if (!active) return;
         setForm({
           name: data.name ?? '',
           description: data.description ?? '',
@@ -49,7 +56,7 @@ export function ProductForm() {
         if (data.imageUrl) setPhotoPreviewUrl(data.imageUrl);
       })
       .catch(() => {
-        // sem backend ainda / produto não encontrado: mantém o formulário vazio
+        if (active) setNotFound(true);
       })
       .finally(() => {
         if (active) setLoadingExisting(false);
@@ -131,6 +138,23 @@ export function ProductForm() {
       <main className="seller-page">
         <div className="seller-container seller-narrow">
           <p className="seller-muted">Carregando produto...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <main className="seller-page">
+        <div className="seller-container seller-narrow">
+          <Link className="seller-back" to={ROUTES.SELLER_PRODUCTS}>← Produtos</Link>
+          <div className="ui-card operations-empty">
+            <h1>Produto indisponível</h1>
+            <p>Não foi possível encontrar ou carregar este produto.</p>
+            <Link className="ui-button ui-button--primary" to={ROUTES.SELLER_PRODUCTS}>
+              Voltar aos produtos
+            </Link>
+          </div>
         </div>
       </main>
     );
