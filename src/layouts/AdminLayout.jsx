@@ -1,10 +1,11 @@
+import { LogoutConfirmation } from '../components/ui/LogoutConfirmation';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { ROUTES } from '../constants/routes';
 import '../styles/admin-layout.css';
 
 export function AdminLayout() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   return (
     <div className="admin-app-shell">
       <aside className="admin-sidebar">
@@ -29,11 +30,11 @@ export function AdminLayout() {
         </nav>
         <div className="admin-sidebar-footer">
           <div className="admin-user"><span>{(user?.name || 'A').charAt(0).toUpperCase()}</span><div><strong>{user?.name || 'Administrador'}</strong><small>acesso administrativo</small></div></div>
-          <button type="button" onClick={logout}><Icon name="logout" /> Sair</button>
+          <LogoutConfirmation><Icon name="logout" /> Sair</LogoutConfirmation>
         </div>
       </aside>
       <div className="admin-content">
-        <header className="admin-mobile-header"><div><strong>UNIFOOD</strong><span>Administração</span></div><button type="button" className="operations-mobile-logout" onClick={logout}>Sair</button></header>
+        <header className="admin-mobile-header"><div className="operations-mobile-brand"><img src="/images/categories/unifood-logo.webp" alt="Unifood" className="unifood-logo" /><strong>Administração</strong></div><LogoutConfirmation className="operations-mobile-logout">Sair</LogoutConfirmation></header>
         <Outlet />
       </div>
     </div>

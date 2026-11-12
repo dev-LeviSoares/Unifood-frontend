@@ -1,130 +1,212 @@
-/* Banner fluido: uma composição integrada que se adapta à largura da seção. */
+/* Banner de ofertas da Home.
+   A arte original tem proporção 2:1 e áreas transparentes ao redor do conjunto.
+   O painel usa uma altura fluida; a imagem mantém sua proporção sem ser deformada. */
 .uf-offer.uf-offer--breakout {
   --combo-orange: #d4420c;
-  container: combo / inline-size;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  position: relative;
+  isolation: isolate;
+  display: flex;
   align-items: center;
   width: 100%;
   min-width: 0;
-  min-height: 0;
-  margin-block: 16px;
-  padding: 0;
-  gap: 0;
+  min-height: clamp(220px, 25vw, 320px);
+  margin: clamp(24px, 3vw, 40px) 0;
+  padding: clamp(24px, 4.5vw, 52px) clamp(24px, 6vw, 76px);
+  overflow: hidden;
+  border-radius: clamp(18px, 2vw, 26px);
   color: #fff;
-  background: transparent;
-  border-radius: 0;
-  overflow: visible;
-  isolation: isolate;
-}
-.uf-offer--breakout > .uf-offer__copy {
-  grid-area: auto;
-  width: 100%;
-  min-width: 0;
-  max-width: none;
-  margin: 0;
-  padding: 20px;
-  padding: clamp(16px, 4cqi, 32px);
   background: var(--combo-orange);
-  border-radius: 20px 20px 0 0;
-  overflow-wrap: anywhere;
-  z-index: 1;
 }
+
+.uf-offer--breakout > .uf-offer__copy {
+  position: relative;
+  z-index: 2;
+  width: min(46%, 470px);
+  min-width: 0;
+  margin: 0;
+}
+
 .uf-offer--breakout .uf-offer__copy > span {
   display: block;
+  margin-bottom: 10px;
   color: #fff4e4;
-  font-size: .6875rem;
-  line-height: 1.5;
+  font-size: clamp(0.625rem, 0.8vw, 0.75rem);
   font-weight: 700;
-  letter-spacing: .06em;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
 }
+
 .uf-offer--breakout .uf-offer__copy h2 {
-  max-width: none;
-  margin: 10px 0 12px;
+  max-width: 440px;
+  margin: 0 0 12px;
   color: #fff;
-  font-size: 28px;
-  font-size: clamp(1.375rem, 5cqi, 2.5rem);
-  line-height: 1.16;
+  font-size: clamp(1.65rem, 3.1vw, 2.65rem);
+  line-height: 1.12;
   text-wrap: balance;
 }
+
 .uf-offer--breakout .uf-offer__copy p {
-  max-width: 38em;
+  max-width: 390px;
   margin: 0 0 18px;
   color: #fff4e4;
-  font-size: .875rem;
-  line-height: 1.6;
+  font-size: clamp(0.75rem, 1vw, 0.9rem);
+  line-height: 1.5;
 }
+
 .uf-offer--breakout .uf-offer__copy .uf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: fit-content;
   max-width: 100%;
-  height: auto;
   min-width: 0;
   min-height: 44px;
-  padding: 12px 16px;
+  padding: 11px 18px;
+  border-radius: 12px;
   color: #a92f06;
   background: #fff4e4;
-  font-size: .875rem;
-  line-height: 1.5;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  font-size: 0.875rem;
+  line-height: 1.35;
   text-align: center;
+  white-space: normal;
 }
-.uf-offer--breakout .uf-offer__copy .uf-button:hover 
-  { background: #fff; }
+
+.uf-offer--breakout .uf-offer__copy .uf-button:hover {
+  background: #fff;
+}
 
 .uf-offer--breakout > .uf-offer__art {
-  grid-area: auto;
-  position: relative;
-  width: 100%;
+  position: absolute;
+  z-index: 1;
+  inset: auto 0 -12% auto;
+  width: 72%;
+  height: 124%;
   min-width: 0;
-  max-width: none;
-  margin: -1px 0 0;
-  background: linear-gradient(var(--combo-orange) 0 18%, transparent 22%);
-  overflow: hidden;
-  z-index: 0;
+  margin: 0;
+  overflow: visible;
   pointer-events: none;
 }
-/* Recorta só a área vazia à esquerda da arte, nunca sua altura. */
+
 .uf-offer--breakout .uf-offer__art img {
   display: block;
-  position: static;
-  inset: auto;
-  width: 155%;
+  width: 100%;
+  height: 100%;
   max-width: none;
-  height: auto;
-  margin: 0 0 0 -52%;
+  margin: 0;
   object-fit: contain;
+  object-position: right center;
   filter: none;
   transform: none;
 }
-/* Sobreposição só quando o próprio banner comporta o conteúdo. */
-@container combo (min-width: 64rem) {
+
+/* Notebooks e tablets em paisagem: a arte cede espaço ao texto sem empilhar. */
+@media (max-width: 900px) {
+  .uf-offer.uf-offer--breakout {
+    min-height: clamp(210px, 29vw, 270px);
+    padding: 28px clamp(22px, 4vw, 38px);
+  }
+
   .uf-offer--breakout > .uf-offer__copy {
-    grid-area: 1 / 1;
-    width: 35%;
-    max-width: none;
-    margin: 0 0 0 8%;
-    padding: 0;
-    background: transparent;
-    border-radius: 0;
+    width: 49%;
   }
-  .uf-offer--breakout .uf-offer__copy h2 { font-size: clamp(1.75rem, 3cqi, 2.25rem); }
-  .uf-offer--breakout .uf-offer__copy p { font-size: .8125rem; }
-  .uf-offer--breakout > .uf-offer__art { grid-area: 1 / 1; margin: 0; background: transparent; }
-  .uf-offer--breakout .uf-offer__art img { width: 100%; margin: 0; }
-}
-/* Superfícies mínimas: quebra de texto e botão contidos na seção. */
-@container combo (max-width: 15rem) {
-  .uf-offer--breakout > .uf-offer__copy { padding: 14px; border-radius: 14px 14px 0 0; }
-  .uf-offer--breakout .uf-offer__copy h2 { font-size: 1.25rem; }
-  .uf-offer--breakout .uf-offer__copy .uf-button { display: block; width: 100%; padding-inline: 8px; }
-}
 
-/* Aproxima o banner dos elementos acima e abaixo na composição larga */
-@container combo (min-width: 64rem) {
+  .uf-offer--breakout .uf-offer__copy h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+  }
+
   .uf-offer--breakout > .uf-offer__art {
-    margin-top: -42px;
-    margin-bottom: -58px;
+    right: -2%;
+    bottom: -10%;
+    width: 72%;
+    height: 120%;
   }
 }
 
+/* Celulares: banner mais baixo, texto legível e produto preservado à direita. */
+@media (max-width: 600px) {
+  .uf-offer.uf-offer--breakout {
+    align-items: center;
+    min-height: clamp(190px, 56vw, 230px);
+    margin-block: 24px;
+    padding: 20px clamp(16px, 4.5vw, 24px);
+    border-radius: 18px;
+  }
+
+  .uf-offer--breakout > .uf-offer__copy {
+    width: 59%;
+  }
+
+  .uf-offer--breakout .uf-offer__copy > span {
+    margin-bottom: 7px;
+    font-size: 0.55rem;
+    letter-spacing: 0.045em;
+  }
+
+  .uf-offer--breakout .uf-offer__copy h2 {
+    max-width: 250px;
+    margin-bottom: 8px;
+    font-size: clamp(1.2rem, 5.3vw, 1.65rem);
+    line-height: 1.08;
+  }
+
+  .uf-offer--breakout .uf-offer__copy p {
+    max-width: 230px;
+    margin-bottom: 10px;
+    font-size: clamp(0.625rem, 2.5vw, 0.75rem);
+    line-height: 1.35;
+  }
+
+  .uf-offer--breakout .uf-offer__copy .uf-button {
+    min-height: 36px;
+    padding: 8px 11px;
+    border-radius: 9px;
+    font-size: 0.7rem;
+  }
+
+  .uf-offer--breakout > .uf-offer__art {
+    right: -5%;
+    bottom: -4%;
+    width: 77%;
+    height: 112%;
+  }
+}
+
+/* Celulares estreitos: simplifica o texto para evitar colisão com a imagem. */
+@media (max-width: 380px) {
+  .uf-offer.uf-offer--breakout {
+    min-height: 190px;
+    padding-inline: 14px;
+  }
+
+  .uf-offer--breakout > .uf-offer__copy {
+    width: 62%;
+  }
+
+  .uf-offer--breakout .uf-offer__copy > span {
+    max-width: 180px;
+    font-size: 0.5rem;
+  }
+
+  .uf-offer--breakout .uf-offer__copy h2 {
+    font-size: clamp(1.1rem, 5.2vw, 1.3rem);
+  }
+
+  .uf-offer--breakout .uf-offer__copy p {
+    max-width: 175px;
+    font-size: 0.625rem;
+  }
+
+  .uf-offer--breakout > .uf-offer__art {
+    right: -9%;
+    width: 78%;
+    height: 108%;
+  }
+}
+
+/* Em telas muito largas, o painel não cresce indefinidamente em altura. */
+@media (min-width: 1440px) {
+  .uf-offer.uf-offer--breakout {
+    min-height: 320px;
+  }
+}

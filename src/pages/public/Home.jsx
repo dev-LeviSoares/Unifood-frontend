@@ -81,32 +81,6 @@ export function Home() {
           </button>
         ))}
       </div>
-      <section className="uf-offer uf-offer--breakout" aria-labelledby="combo-heading">
-        <div className="uf-offer__copy">
-          <span>OFERTAS QUE SALVAM O INTERVALO</span>
-
-          <h2 id="combo-heading">
-            Tá com fome?
-            <br />
-            Confira as ofertas
-          </h2>
-
-          <p>Comida boa, preço de estudante e retirada no seu campus.</p>
-
-          <Link className="uf-button uf-button--white" to={ROUTES.SELLERS}>
-            Bora aproveitar <span aria-hidden="true">→</span>
-          </Link>
-        </div>
-        <div className="uf-offer__art">
-          <img
-            src="/images/food/hero-combo-breakout.png"
-            alt="Hambúrguer e Coca-Cola atravessando a borda de um painel laranja, com pequenos fragmentos ao redor"
-            width="1774"
-            height="887"
-            decoding="async"
-          />
-        </div>
-      </section>
       <Categories
         selected="Lanches"
         onSelect={(category) =>
@@ -145,6 +119,32 @@ export function Home() {
             ))}
           </div>
         )}
+      </section>
+      <section className="uf-offer uf-offer--breakout" aria-labelledby="combo-heading">
+        <div className="uf-offer__copy">
+          <span>OFERTAS QUE SALVAM O INTERVALO</span>
+
+          <h2 id="combo-heading">
+            Tá com fome?
+            <br />
+            Confira as ofertas
+          </h2>
+
+          <p>Comida boa, preço de estudante e retirada no seu campus.</p>
+
+          <Link className="uf-button uf-button--white" to={ROUTES.SELLERS}>
+            Bora aproveitar <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+        <div className="uf-offer__art">
+          <img
+            src="/images/food/hero-combo-breakout.png"
+            alt="Hambúrguer e Coca-Cola atravessando a borda de um painel laranja, com pequenos fragmentos ao redor"
+            width="1774"
+            height="887"
+            decoding="async"
+          />
+        </div>
       </section>
       <section className="uf-section">
         <div className="uf-section-heading">

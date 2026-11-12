@@ -1,0 +1,127 @@
+.approval-confirm {
+  width: min(420px, calc(100% - 32px));
+  box-sizing: border-box;
+  padding: 24px;
+  border: 1px solid #ece8e2;
+  border-radius: 18px;
+  color: #292524;
+  background: #fffdfa;
+}
+.approval-confirm::backdrop {
+  background: #1c191780;
+}
+.approval-confirm h2 {
+  margin: 0 0 12px;
+  font-size: 22px;
+}
+.approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.approval-actions button,
+.approval-refresh {
+  padding: 10px 18px;
+  border: 1px solid #d6d3d1;
+  border-radius: 10px;
+  background: white;
+  color: #292524;
+  font: inherit;
+  cursor: pointer;
+  min-height: 44px;
+}
+.approval-actions .approval-primary {
+  background: #d4420c;
+  color: white;
+  border-color: #d4420c;
+}
+.approval-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.approval-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 16px;
+}
+.approval-fields div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.approval-fields dt {
+  font-weight: 600;
+}
+.approval-fields dd {
+  margin: 4px 0 0;
+}
+.approval-review textarea {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 8px;
+  min-height: 80px;
+  border: 1px solid #d6d3d1;
+  border-radius: 8px;
+  padding: 10px;
+  font: inherit;
+}
+.approval-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px;
+  margin: 24px 0;
+}
+.approval-toolbar label {
+  display: grid;
+  gap: 6px;
+}
+.approval-toolbar input,
+.approval-toolbar select {
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #d6d3d1;
+  border-radius: 10px;
+  font: inherit;
+  background: white;
+}
+.approval-notice {
+  padding: 16px;
+  background: #fff1db;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.approval-photo {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.approval-review {
+  margin-block: 24px;
+}
+.approval-review-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.approval-review h3 {
+  margin-top: 20px;
+}
+.approval-confirm {
+  overflow-wrap: anywhere;
+}
+.approval-toolbar input {
+  width: min(100%, 340px);
+}
+.approval-review label {
+  display: block;
+}
+.approval-fields {
+  margin-block: 24px;
+}

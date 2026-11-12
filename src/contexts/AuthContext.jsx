@@ -1,14 +1,21 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/api/authService';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useNavigate } from "react-router-dom";
+import { authService } from "../services/api/authService";
 import {
   clearSession,
   getStoredToken,
   getStoredUser,
   setSession,
-} from '../services/storage/storage';
-import { ROUTES } from '../constants/routes';
-import { ROLES } from '../constants/roles';
+} from "../services/storage/storage";
+import { ROUTES } from "../constants/routes";
+import { ROLES } from "../constants/roles";
+import { adminSellerService } from "../services/api/adminSellerService";
 
 export const AuthContext = createContext(null);
 
@@ -31,17 +38,23 @@ export function AuthProvider({ children }) {
       logout();
       navigate(ROUTES.LOGIN, { replace: true });
     }
-    window.addEventListener('unifood:session-expired', handleSessionExpired);
-    return () => window.removeEventListener('unifood:session-expired', handleSessionExpired);
+    window.addEventListener("unifood:session-expired", handleSessionExpired);
+    return () =>
+      window.removeEventListener(
+        "unifood:session-expired",
+        handleSessionExpired,
+      );
   }, [logout, navigate]);
 
   const devLogin = useCallback(async ({ role, name }) => {
     // Sessão sintética exclusivamente para navegação local; jamais habilitada em produção.
-    if (!import.meta.env.DEV || import.meta.env.VITE_DEV_MODE !== 'true') {
-      throw new Error('A navegação de teste só está disponível no ambiente local.');
+    if (!import.meta.env.DEV || import.meta.env.VITE_DEV_MODE !== "true") {
+      throw new Error(
+        "A navegação de teste só está disponível no ambiente local.",
+      );
     }
     if (!Object.values(ROLES).includes(role)) {
-      throw new Error('Perfil de teste inválido.');
+      throw new Error("Perfil de teste inválido.");
     }
 
     const testUser = { id: `dev-${role}`, name, role };
@@ -60,7 +73,7 @@ export function AuthProvider({ children }) {
       const receivedToken = response.token;
 
       if (!loggedUser || !receivedToken) {
-        throw new Error('Resposta de autenticação inválida.');
+        throw new Error("Resposta de autenticação inválida.");
       }
 
       setSession(receivedToken, loggedUser);
@@ -72,6 +85,23 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const sellerUserId = user?.id;
+  const sellerUserRole = user?.role;
+  const refreshApproval = useCallback(async () => {
+    if (sellerUserRole !== ROLES.SELLER) return;
+    const seller = await adminSellerService.mine({ id: sellerUserId });
+    setUser((current) => {
+      if (!current || current.id !== sellerUserId) return current;
+      const next = {
+        ...current,
+        approvalStatus: seller.approvalStatus,
+        rejectionReason: seller.rejectionReason,
+      };
+      setSession(token, next);
+      return next;
+    });
+  }, [sellerUserId, sellerUserRole, token]);
+
   const value = useMemo(
     () => ({
       user,
@@ -82,8 +112,9 @@ export function AuthProvider({ children }) {
       login,
       devLogin,
       logout,
+      refreshApproval,
     }),
-    [user, token, loading, login, devLogin, logout]
+    [user, token, loading, login, devLogin, logout, refreshApproval],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,31 +1,90 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { ROUTES } from '../../constants/routes';
-import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import './seller.css';
+import { Link } from "react-router-dom";
+import { sellerApproval } from "../../utils/sellerApproval";
+import { useAuth } from "../../hooks/useAuth";
+import { ROUTES } from "../../constants/routes";
+import { Card } from "../../components/ui/Card";
+import { Badge } from "../../components/ui/Badge";
+import "./seller.css";
 
 const metrics = [
-  { key: 'pending', label: 'Pedidos pendentes', value: '0', tone: 'warning', href: `${ROUTES.SELLER_ORDERS}?status=pending` },
-  { key: 'preparing', label: 'Em preparação', value: '0', tone: 'info', href: `${ROUTES.SELLER_ORDERS}?status=preparing` },
-  { key: 'ready', label: 'Pedidos prontos', value: '0', tone: 'success', href: `${ROUTES.SELLER_ORDERS}?status=ready` },
-  { key: 'completed', label: 'Vendas concluídas', value: '0', tone: 'neutral', href: ROUTES.SELLER_HISTORY },
-  { key: 'active', label: 'Produtos ativos', value: '0', tone: 'info', href: ROUTES.SELLER_PRODUCTS },
-  { key: 'soldOut', label: 'Produtos esgotados', value: '0', tone: 'danger', href: ROUTES.SELLER_PRODUCTS },
+  {
+    key: "pending",
+    label: "Pedidos pendentes",
+    value: "0",
+    tone: "warning",
+    href: `${ROUTES.SELLER_ORDERS}?status=pending`,
+  },
+  {
+    key: "preparing",
+    label: "Em preparação",
+    value: "0",
+    tone: "info",
+    href: `${ROUTES.SELLER_ORDERS}?status=preparing`,
+  },
+  {
+    key: "ready",
+    label: "Pedidos prontos",
+    value: "0",
+    tone: "success",
+    href: `${ROUTES.SELLER_ORDERS}?status=ready`,
+  },
+  {
+    key: "completed",
+    label: "Vendas concluídas",
+    value: "0",
+    tone: "neutral",
+    href: ROUTES.SELLER_HISTORY,
+  },
+  {
+    key: "active",
+    label: "Produtos ativos",
+    value: "0",
+    tone: "info",
+    href: ROUTES.SELLER_PRODUCTS,
+  },
+  {
+    key: "soldOut",
+    label: "Produtos esgotados",
+    value: "0",
+    tone: "danger",
+    href: ROUTES.SELLER_PRODUCTS,
+  },
 ];
 
 const statusCopy = {
-  pending: { label: 'Cadastro em análise', description: 'Seu cadastro precisa ser aprovado pelo administrador antes de publicar produtos e receber pedidos.', tone: 'warning' },
-  approved: { label: 'Aprovado', description: 'Sua conta está apta a publicar produtos e operar pedidos.', tone: 'success' },
-  active: { label: 'Aprovado', description: 'Sua conta está apta a publicar produtos e operar pedidos.', tone: 'success' },
-  rejected: { label: 'Cadastro recusado', description: 'Consulte a equipe responsável para saber os próximos passos.', tone: 'error' },
-  blocked: { label: 'Conta bloqueada', description: 'Sua operação está bloqueada. Consulte a equipe responsável.', tone: 'error' },
+  pending: {
+    label: "Cadastro em análise",
+    description:
+      "Seu cadastro precisa ser aprovado pelo administrador antes de publicar produtos e receber pedidos.",
+    tone: "warning",
+  },
+  approved: {
+    label: "Aprovado",
+    description: "Sua conta está apta a publicar produtos e operar pedidos.",
+    tone: "success",
+  },
+  active: {
+    label: "Aprovado",
+    description: "Sua conta está apta a publicar produtos e operar pedidos.",
+    tone: "success",
+  },
+  rejected: {
+    label: "Cadastro recusado",
+    description: "Consulte a equipe responsável para saber os próximos passos.",
+    tone: "error",
+  },
+  blocked: {
+    label: "Conta bloqueada",
+    description: "Sua operação está bloqueada. Consulte a equipe responsável.",
+    tone: "error",
+  },
 };
 
 export function Dashboard() {
   const { user } = useAuth();
-  const status = statusCopy[user?.status?.toLowerCase()] || statusCopy.pending;
-  const establishmentName = user?.establishmentName || 'Seu estabelecimento';
+  const status =
+    statusCopy[sellerApproval(user).toLowerCase()] || statusCopy.pending;
+  const establishmentName = user?.establishmentName || "Seu estabelecimento";
 
   return (
     <main className="seller-page">
@@ -33,21 +92,48 @@ export function Dashboard() {
         <header className="seller-page-header">
           <div>
             <span className="seller-eyebrow">Painel do vendedor</span>
-            <h1>Olá, {user?.name?.split(' ')[0] || 'vendedor'}.</h1>
-            <p>Acompanhe sua operação e mantenha o cardápio pronto para os intervalos da universidade.</p>
+            <h1>Olá, {user?.name?.split(" ")[0] || "vendedor"}.</h1>
+            <p>
+              Acompanhe sua operação e mantenha o cardápio pronto para os
+              intervalos da universidade.
+            </p>
           </div>
-          <Link className="ui-button ui-button--primary" to={ROUTES.SELLER_PRODUCT_NEW}>
+          <Link
+            className="ui-button ui-button--primary"
+            to={ROUTES.SELLER_PRODUCT_NEW}
+          >
             Novo produto
           </Link>
         </header>
 
+        {user?.rejectionReason && (
+          <p className="approval-notice">
+            Motivo da recusa: {user.rejectionReason}
+          </p>
+        )}
         <Card>
           <div className="seller-account-status">
-            <Badge tone={status.tone === 'error' ? 'error' : status.tone}>{status.tone === 'success' ? '✓ Aprovado' : status.label}</Badge>
+            <Badge tone={status.tone === "error" ? "error" : status.tone}>
+              {status.tone === "success" ? "✓ Aprovado" : status.label}
+            </Badge>
             <div style={{ flex: 1 }}>
-              <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--fs-small)' }}>{status.description}</p>
+              <p
+                style={{
+                  color: "var(--color-text-secondary)",
+                  fontSize: "var(--fs-small)",
+                }}
+              >
+                {status.description}
+              </p>
             </div>
-            <Link to={ROUTES.SELLER_PROFILE} style={{ color: 'var(--color-primary-dark)', fontWeight: 600, fontSize: 'var(--fs-small)' }}>
+            <Link
+              to={ROUTES.SELLER_PROFILE}
+              style={{
+                color: "var(--color-primary-dark)",
+                fontWeight: 600,
+                fontSize: "var(--fs-small)",
+              }}
+            >
               Ver perfil
             </Link>
           </div>
@@ -63,7 +149,11 @@ export function Dashboard() {
           </div>
           <div className="seller-metrics-grid">
             {metrics.map((metric) => (
-              <Link className="seller-metric-link" to={metric.href} key={metric.key}>
+              <Link
+                className="seller-metric-link"
+                to={metric.href}
+                key={metric.key}
+              >
                 <Card className="ui-card seller-metric-card">
                   <span className={`seller-metric-dot ${metric.tone}`} />
                   <span className="seller-metric-label">{metric.label}</span>
@@ -72,8 +162,16 @@ export function Dashboard() {
               </Link>
             ))}
           </div>
-          <p className="seller-data-note" style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--fs-caption)', marginTop: 'var(--space-3)' }}>
-            Os indicadores serão alimentados pelos pedidos e produtos da sua conta quando a API estiver conectada.
+          <p
+            className="seller-data-note"
+            style={{
+              color: "var(--color-text-secondary)",
+              fontSize: "var(--fs-caption)",
+              marginTop: "var(--space-3)",
+            }}
+          >
+            Os indicadores serão alimentados pelos pedidos e produtos da sua
+            conta quando a API estiver conectada.
           </p>
         </section>
 
@@ -81,22 +179,67 @@ export function Dashboard() {
           <Link className="seller-card-link" to={ROUTES.SELLER_PRODUCTS}>
             <Card>
               <span className="seller-eyebrow">Produtos</span>
-              <strong style={{ display: 'block', fontSize: 'var(--fs-h3)', margin: 'var(--space-2) 0' }}>Organize seu catálogo</strong>
-              <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--fs-small)' }}>Cadastre produtos, ajuste preço, estoque e disponibilidade.</p>
+              <strong
+                style={{
+                  display: "block",
+                  fontSize: "var(--fs-h3)",
+                  margin: "var(--space-2) 0",
+                }}
+              >
+                Organize seu catálogo
+              </strong>
+              <p
+                style={{
+                  color: "var(--color-text-secondary)",
+                  fontSize: "var(--fs-small)",
+                }}
+              >
+                Cadastre produtos, ajuste preço, estoque e disponibilidade.
+              </p>
             </Card>
           </Link>
           <Link className="seller-card-link" to={ROUTES.SELLER_MENUS}>
             <Card>
               <span className="seller-eyebrow">Cardápios</span>
-              <strong style={{ display: 'block', fontSize: 'var(--fs-h3)', margin: 'var(--space-2) 0' }}>Monte o cardápio de hoje</strong>
-              <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--fs-small)' }}>Escolha o que estará disponível para os estudantes.</p>
+              <strong
+                style={{
+                  display: "block",
+                  fontSize: "var(--fs-h3)",
+                  margin: "var(--space-2) 0",
+                }}
+              >
+                Monte o cardápio de hoje
+              </strong>
+              <p
+                style={{
+                  color: "var(--color-text-secondary)",
+                  fontSize: "var(--fs-small)",
+                }}
+              >
+                Escolha o que estará disponível para os estudantes.
+              </p>
             </Card>
           </Link>
           <Link className="seller-card-link" to={ROUTES.SELLER_ORDERS}>
             <Card>
               <span className="seller-eyebrow">Pedidos</span>
-              <strong style={{ display: 'block', fontSize: 'var(--fs-h3)', margin: 'var(--space-2) 0' }}>Acompanhe as retiradas</strong>
-              <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--fs-small)' }}>Veja pedidos e avance cada etapa da preparação.</p>
+              <strong
+                style={{
+                  display: "block",
+                  fontSize: "var(--fs-h3)",
+                  margin: "var(--space-2) 0",
+                }}
+              >
+                Acompanhe as retiradas
+              </strong>
+              <p
+                style={{
+                  color: "var(--color-text-secondary)",
+                  fontSize: "var(--fs-small)",
+                }}
+              >
+                Veja pedidos e avance cada etapa da preparação.
+              </p>
             </Card>
           </Link>
         </section>

@@ -43,10 +43,14 @@
   border-color: #ece8e2;
   overflow-y: auto;
 }
-:is(.seller-sidebar-brand, .admin-brand) { flex-wrap: wrap; padding: 0 8px 28px; gap: 8px; }
-:is(.seller-sidebar-brand, .admin-brand) .unifood-logo { width: 132px; max-width: 100%; height: 48px; object-fit: contain; object-position: left center; }
+:is(.seller-sidebar-brand, .admin-brand) { flex-wrap: nowrap; padding: 0 8px 28px; gap: 12px; }
+:is(.seller-sidebar-brand, .admin-brand) .unifood-logo { width: 40px; max-width: 100%; height: 40px; flex: 0 0 40px; object-fit: contain; object-position: left center; }
 :is(.seller-sidebar-brand, .admin-brand) > div > strong { display: none; }
-:is(.seller-sidebar-brand, .admin-brand) > div > small { font-size: 11px; }
+:is(.seller-sidebar-brand, .admin-brand) > div { min-width: 0; }
+:is(.seller-sidebar-brand, .admin-brand) > div > small { margin: 0; font-family: 'Inter', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -.6px; line-height: 1.25; color: var(--color-text); }
+:is(.seller-mobile-header, .admin-mobile-header) .operations-mobile-brand { display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; }
+.operations-mobile-brand .unifood-logo { width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; }
+:is(.seller-mobile-header, .admin-mobile-header) .operations-mobile-brand strong { font-family: 'Inter', sans-serif; font-size: clamp(14px, 4.5vw, 19px); font-weight: 800; letter-spacing: -.6px; line-height: 1.25; color: var(--color-text); }
 :is(.seller-sidebar, .admin-sidebar) nav a { min-height: 48px; border-radius: 14px; }
 :is(.seller-sidebar, .admin-sidebar) nav a.active { background: #fff0e7; color: #d4420c; }
 :is(.seller-sidebar, .admin-sidebar) nav a:hover { background: #faf8f5; }
@@ -177,4 +181,8 @@
 .seller-account-status > div { min-width: min(100%, 180px); }
 @media (max-width: 767px) {
   .seller-account-status { align-items: flex-start; flex-direction: column; }
+}
+
+@media (max-width: 280px) {
+  :is(.seller-mobile-header, .admin-mobile-header) { flex-wrap: wrap; gap: 8px; }
 }

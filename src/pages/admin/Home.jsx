@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { ROUTES } from '../../constants/routes';
-import { adminSections } from './adminPreview';
-import './admin.css';
+import { PendingSellerNotice } from "./PendingSellerNotice";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { ROUTES } from "../../constants/routes";
+import { adminSections } from "./adminPreview";
+import "./admin.css";
 
 export function Home() {
   const { user } = useAuth();
@@ -14,8 +15,11 @@ export function Home() {
         <header className="admin-page-header">
           <div>
             <span className="admin-eyebrow">Visão da plataforma</span>
-            <h1>Olá, {user?.name?.split(' ')[0] || 'administrador'}.</h1>
-            <p>Seu campus em um só lugar. Explore as áreas e acompanhe a operação.</p>
+            <h1>Olá, {user?.name?.split(" ")[0] || "administrador"}.</h1>
+            <p>
+              Seu campus em um só lugar. Explore as áreas e acompanhe a
+              operação.
+            </p>
           </div>
           <Link className="admin-outline-action" to={ROUTES.HOME}>
             Ver marketplace →
@@ -23,20 +27,33 @@ export function Home() {
         </header>
 
         <p className="operations-notice">
-          Demonstração visual: os indicadores e registros abaixo são fictícios.
-          A gestão real depende da integração administrativa.
+          Demonstração visual: usuários, produtos e pedidos usam registros de
+          exemplo. Os cadastros de vendedores têm uma área própria de análise e
+          aprovação.
         </p>
 
-        <section className="admin-metrics-grid" aria-label="Indicadores de demonstração">
+        <section
+          className="admin-metrics-grid"
+          aria-label="Indicadores de demonstração"
+        >
           {sections.map((section) => (
             <Link to={section.path} className="admin-metric" key={section.path}>
               <span>{section.title}</span>
-              <strong>{section.rows.length}</strong>
-              <small>Registros de exemplo →</small>
+              <strong>
+                {section.path === ROUTES.ADMIN_SELLERS
+                  ? "→"
+                  : section.rows.length}
+              </strong>
+              <small>
+                {section.path === ROUTES.ADMIN_SELLERS
+                  ? "Analisar cadastros →"
+                  : "Registros de exemplo →"}
+              </small>
             </Link>
           ))}
         </section>
 
+        <PendingSellerNotice />
         <section className="admin-attention-grid">
           <article className="admin-panel">
             <span className="admin-eyebrow">Acesso rápido</span>
@@ -46,7 +63,11 @@ export function Home() {
                 <Link key={section.path} to={section.path}>
                   <div>
                     <strong>{section.title}</strong>
-                    <p>{section.description}</p>
+                    <p>
+                      {section.path === ROUTES.ADMIN_SELLERS
+                        ? "Confira os dados e analise os cadastros de vendedores."
+                        : section.description}
+                    </p>
                   </div>
                   <span aria-hidden="true">→</span>
                 </Link>

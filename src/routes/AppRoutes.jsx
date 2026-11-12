@@ -1,46 +1,47 @@
-import { Route, Routes } from 'react-router-dom';
-import { ProtectedRoute } from './ProtectedRoute';
-import { ROLES } from '../constants/roles';
-import { ROUTES } from '../constants/routes';
-import { PublicLayout } from '../layouts/PublicLayout';
-import { StudentLayout } from '../layouts/StudentLayout';
-import { SellerLayout } from '../layouts/SellerLayout';
-import { AdminLayout } from '../layouts/AdminLayout';
-import { Home as PublicHome } from '../pages/public/Home';
-import { Login } from '../pages/public/Login';
-import { Register } from '../pages/public/Register';
-import { StudentRegister } from '../pages/public/StudentRegister';
-import { SellerRegister } from '../pages/public/SellerRegister';
-import { PasswordRecovery } from '../pages/public/PasswordRecovery';
-import { Home as StudentHome } from '../pages/student/Home';
-import { AdminCollection } from '../pages/admin/Collection';
-import { Home as AdminHome } from '../pages/admin/Home';
-import { Marketplace } from '../pages/student/marketplace/Marketplace';
-import { SellerProfile as MarketplaceSellerProfile } from '../pages/student/marketplace/SellerProfile';
-import { SellerMenu } from '../pages/student/marketplace/SellerMenu';
-import { ProductDetail } from '../pages/student/marketplace/ProductDetail';
-import { Checkout } from '../pages/student/Checkout';
-import { StudentOrders } from '../pages/student/Orders';
-import { StudentOrderDetail } from '../pages/student/OrderDetail';
-import { StudentProfile } from '../pages/student/Profile';
-import { NotFound } from '../pages/shared/NotFound';
-import { Cart } from '../pages/student/Cart';
-import { Dashboard } from '../pages/seller/Dashboard';
-import { Profile } from '../pages/seller/Profile';
-import { Products } from '../pages/seller/Products';
-import { ProductForm } from '../pages/seller/ProductForm';
-import { Menus } from '../pages/seller/Menus';
-import { MenuForm } from '../pages/seller/MenuForm';
-import { Orders } from '../pages/seller/Orders';
-import { OrderDetail } from '../pages/seller/OrderDetail';
-import { History } from '../pages/seller/History';
-import { DevAccess } from '../pages/dev/DevAccess';
-import '../styles/operations-design.css';
+import { Route, Routes } from "react-router-dom";
+import { ProtectedRoute } from "./ProtectedRoute";
+import { ROLES } from "../constants/roles";
+import { ROUTES } from "../constants/routes";
+import { PublicLayout } from "../layouts/PublicLayout";
+import { StudentLayout } from "../layouts/StudentLayout";
+import { SellerLayout } from "../layouts/SellerLayout";
+import { AdminLayout } from "../layouts/AdminLayout";
+import { Home as PublicHome } from "../pages/public/Home";
+import { Login } from "../pages/public/Login";
+import { Register } from "../pages/public/Register";
+import { StudentRegister } from "../pages/public/StudentRegister";
+import { SellerRegister } from "../pages/public/SellerRegister";
+import { PasswordRecovery } from "../pages/public/PasswordRecovery";
+import { Home as StudentHome } from "../pages/student/Home";
+import { AdminSellers } from "../pages/admin/Sellers";
+import { AdminCollection } from "../pages/admin/Collection";
+import { Home as AdminHome } from "../pages/admin/Home";
+import { Marketplace } from "../pages/student/marketplace/Marketplace";
+import { SellerProfile as MarketplaceSellerProfile } from "../pages/student/marketplace/SellerProfile";
+import { SellerMenu } from "../pages/student/marketplace/SellerMenu";
+import { ProductDetail } from "../pages/student/marketplace/ProductDetail";
+import { Checkout } from "../pages/student/Checkout";
+import { StudentOrders } from "../pages/student/Orders";
+import { StudentOrderDetail } from "../pages/student/OrderDetail";
+import { StudentProfile } from "../pages/student/Profile";
+import { NotFound } from "../pages/shared/NotFound";
+import { Cart } from "../pages/student/Cart";
+import { Dashboard } from "../pages/seller/Dashboard";
+import { Profile } from "../pages/seller/Profile";
+import { Products } from "../pages/seller/Products";
+import { ProductForm } from "../pages/seller/ProductForm";
+import { Menus } from "../pages/seller/Menus";
+import { MenuForm } from "../pages/seller/MenuForm";
+import { Orders } from "../pages/seller/Orders";
+import { OrderDetail } from "../pages/seller/OrderDetail";
+import { History } from "../pages/seller/History";
+import { DevAccess } from "../pages/dev/DevAccess";
+import "../styles/operations-design.css";
 
 export function AppRoutes() {
   return (
     <Routes>
-      {import.meta.env.DEV && import.meta.env.VITE_DEV_MODE === 'true' && (
+      {import.meta.env.DEV && import.meta.env.VITE_DEV_MODE === "true" && (
         <Route path="/__dev" element={<DevAccess />} />
       )}
       <Route element={<PublicLayout />}>
@@ -97,10 +98,19 @@ export function AppRoutes() {
       <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
         <Route element={<AdminLayout />}>
           <Route path={ROUTES.ADMIN_HOME} element={<AdminHome />} />
-          <Route path={ROUTES.ADMIN_USERS} element={<AdminCollection resource="users" />} />
-          <Route path={ROUTES.ADMIN_SELLERS} element={<AdminCollection resource="sellers" />} />
-          <Route path={ROUTES.ADMIN_PRODUCTS} element={<AdminCollection resource="products" />} />
-          <Route path={ROUTES.ADMIN_ORDERS} element={<AdminCollection resource="orders" />} />
+          <Route
+            path={ROUTES.ADMIN_USERS}
+            element={<AdminCollection resource="users" />}
+          />
+          <Route path={ROUTES.ADMIN_SELLERS} element={<AdminSellers />} />
+          <Route
+            path={ROUTES.ADMIN_PRODUCTS}
+            element={<AdminCollection resource="products" />}
+          />
+          <Route
+            path={ROUTES.ADMIN_ORDERS}
+            element={<AdminCollection resource="orders" />}
+          />
         </Route>
       </Route>
 
